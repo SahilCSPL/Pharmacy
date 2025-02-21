@@ -48,7 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const isWishlisted = wishlistItems.some((item) => item.id === product.id);
 
   // Create a URL that includes both a slug and product id.
-  const productUrl = `/product/${slugify(product.name)}-${product.id}`;
+  const productUrl = `/product/${product.id}`;
 
   const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -170,7 +170,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
         </Link>
-        <p className="text-[--textColor] text-[10px] ">{product.category_name}</p>
+        <p className="text-[--textColor] text-[10px] ">
+          {product.category_name}
+        </p>
         <div className="flex items-baseline text-sm">
           <span className="text-red-500 font-bold pe-1">
             {formatPrice(product.base_price)}

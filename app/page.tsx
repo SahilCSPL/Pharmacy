@@ -13,14 +13,14 @@ export default function Home() {
       <HomeBanner />
       <CategorySlider />
       <ProductSection
-        category_id={52}
+        category_id={"52"}
         title="Glow with the Best Skincare!"
         bgImage="/background/skin-care-background-banner.jpg"
         contentPosition="end"
       />
       <OurCategory />
       <ProductSection
-        category_id={52}
+        category_id={"52"}
         title="Nature's Healing Touch!"
         bgImage="/background/ayurved.jpg"
         contentPosition="start"
