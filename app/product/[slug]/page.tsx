@@ -4,7 +4,12 @@ import type { Metadata } from "next";
 import { getProductInfoByid, ProductInfo } from "@/api/ShopPageApi";
 import ProductDetailClient from "@/components/ClientSideComponent/SingleProductPageComponent/ProductDetailClient";
 
-// Helper: Extract product id from slug (expects slug like "product-name-5")
+// Define the expected type for the `params` prop
+interface ProductPageProps {
+  params: { slug: string };
+}
+
+// Helper: Extract product ID from slug (expects slug like "product-name-5")
 const extractProductId = (slug: string): number | null => {
   const parts = slug.split("-");
   const idString = parts[parts.length - 1];
@@ -12,11 +17,10 @@ const extractProductId = (slug: string): number | null => {
   return isNaN(id) ? null : id;
 };
 
+// ✅ Generate Metadata for SEO
 export async function generateMetadata({
   params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
+}: ProductPageProps): Promise<Metadata> {
   const productId = extractProductId(params.slug);
   if (!productId) return { title: "Product Not Found" };
 
@@ -32,18 +36,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+// ✅ Main Product Page Component
+export default async function ProductPage({ params }: ProductPageProps) {
   const productId = extractProductId(params.slug);
-  if (!productId) {
-    notFound();
-  }
-  const product: ProductInfo = await getProductInfoByid(productId);
-  if (!product) {
-    notFound();
-  }
+  if (!productId) return notFound();
+
+  const product: ProductInfo | null = await getProductInfoByid(productId);
+  if (!product) return notFound();
+
   return <ProductDetailClient product={product} />;
 }
