@@ -3,23 +3,22 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { toast } from "react-toastify";
-import {
-  getCart,
-  CartResponse,
-  addOrUpdateCart,
-  deleteCart,
-} from "@/api/cartPageApi";
+import { getCart, CartResponse } from "@/api/cartPageApi";
 import {
   getCustomerAddresses,
   CustomerAddressesResponse,
 } from "@/api/ProfilePageApi";
 import { setDefaultAddress, Address } from "@/redux/userSlice";
-import { updateCartItem, removeFromCart } from "@/redux/cartSlice";
 import { OrderData, placeOrderAPI } from "@/api/orderApi";
 import AddressForm from "@/components/ClientSideComponent/ProfilePageComponent/AddressForm";
 import CartProductsSummary from "@/components/ClientSideComponent/CartComponent/CartSummery";
+import { clearCart } from "@/redux/cartSlice";
+import { useRouter } from "next/navigation";
 
 const CheckoutPage = () => {
+  // Router for redirection
+  const router = useRouter();
+
   // Auth info from Redux
   const token = useSelector((state: RootState) => state.user.token);
   const customer = useSelector((state: RootState) => state.user.id);
@@ -66,7 +65,6 @@ const CheckoutPage = () => {
 
   // For guest users, we assume cart details come from the Redux cart slice
   const localCart = useSelector((state: RootState) => state.cart);
-
   // Fetch cart and addresses if logged in
   useEffect(() => {
     if (token && customer) {
@@ -116,6 +114,11 @@ const CheckoutPage = () => {
           (sum, item) => sum + parseFloat(item.price) * item.quantity,
           0
         );
+
+  const deliveryCharges = 110;
+  const taxPercentage = 10;
+
+  const finalTotal = subtotal + subtotal / taxPercentage + deliveryCharges;
 
   // --- Order Placement Handler ---
   const handlePlaceOrder = async (
@@ -168,21 +171,22 @@ const CheckoutPage = () => {
     // Build order payload according to your API requirements.
     const orderPayload: OrderData = {
       sub_total: subtotal,
-      tax: 10,
-      delivery_charge: 10,
+      tax: taxPercentage,
+      delivery_charge: deliveryCharges,
       discount: 0,
-      final_total: subtotal,
+      final_total: finalTotal,
       is_payment_done: paymentMethod === "online" ? true : false,
       payment_transaction_id: paymentMethod === "online" ? "TXN123" : "",
-      payment_type: paymentMethod === "Cash on Delivery" ? "Cash on Delivery" : "Online",
+      payment_type:
+        paymentMethod === "Cash on Delivery" ? "Cash on Delivery" : "Online",
       payment_datetime: new Date().toISOString(),
       billing_address: token
-        ? `${selectedBillingAddress?.address}, ${selectedBillingAddress?.city}, ${selectedBillingAddress?.state} ${selectedBillingAddress?.zipcode}, ${selectedBillingAddress?.country}`
+        ? `${selectedBillingAddress?.address}, ${selectedBillingAddress?.locality},${selectedBillingAddress?.city}, ${selectedBillingAddress?.state} ${selectedBillingAddress?.zipcode}, ${selectedBillingAddress?.country}`
         : billingSame
         ? `${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipcode}, ${shippingAddress.country}`
         : `${billingAddress.address}, ${billingAddress.city}, ${billingAddress.state} ${billingAddress.zipcode}, ${billingAddress.country}`,
       delivery_address: token
-        ? `${selectedDeliveryAddress?.address}, ${selectedDeliveryAddress?.city}, ${selectedDeliveryAddress?.state} ${selectedDeliveryAddress?.zipcode}, ${selectedDeliveryAddress?.country}`
+        ? `${selectedDeliveryAddress?.address}, ${selectedDeliveryAddress?.locality}, ${selectedDeliveryAddress?.city}, ${selectedDeliveryAddress?.state} ${selectedDeliveryAddress?.zipcode}, ${selectedDeliveryAddress?.country}`
         : `${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipcode}, ${shippingAddress.country} - ${shippingAddress.phone}`,
       products: (token && cartData
         ? cartData.products
@@ -194,11 +198,15 @@ const CheckoutPage = () => {
       })),
     };
 
-    console.log("Placing order with payload:", orderPayload);
     try {
       if (token) {
         const orderResponse = await placeOrderAPI(orderPayload, token);
         toast.success(orderResponse.message);
+        if (orderResponse.message === "Order placed successfully") {
+          dispatch(clearCart());
+          // dispatch(re)
+          router.push(`/thankyou?orderId=${orderResponse.order_id}`);
+        }
       } else {
         toast.success("Order placed successfully! (Demo)");
       }
@@ -306,7 +314,7 @@ const CheckoutPage = () => {
                       >
                         {selectedBillingAddress &&
                           selectedBillingAddress.id === addr.id && (
-                            <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded absolute top-2 left-2">
+                            <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
                               Selected
                             </span>
                           )}
@@ -316,7 +324,7 @@ const CheckoutPage = () => {
                           {addr.city}, {addr.state} {addr.zipcode}
                         </p>
                         <p>{addr.country}</p>
-                        <div className="flex gap-1 absolute top-2 right-2">
+                        <div className="flex gap-1">
                           <button className="text-blue-600 text-xs">
                             Edit
                           </button>
@@ -551,8 +559,8 @@ const CheckoutPage = () => {
 
         {/* Right Section: Cart & Payment Summary */}
         <div className="w-full md:w-1/3 border p-4 rounded space-y-6">
-          <h2 className="text-2xl font-bold">Your Cart</h2>
           <div className="border p-4 rounded">
+            <h2 className="text-2xl font-bold">Your Cart</h2>
             {token && cartData ? (
               <CartProductsSummary
                 cartItems={localCart.cartItems}
@@ -563,6 +571,38 @@ const CheckoutPage = () => {
               <CartProductsSummary cartItems={localCart.cartItems} />
             )}
           </div>
+          <div className="border border-gray-300 p-6 rounded-lg shadow-lg bg-white">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Order Summary
+            </h2>
+            <table className="w-full border-collapse">
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-2 text-gray-600">Subtotal</td>
+                  <td className="py-2 text-right font-medium text-gray-800">
+                    {subtotal}
+                  </td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 text-gray-600">Tax</td>
+                  <td className="py-2 text-right font-medium text-gray-800">
+                    {taxPercentage} %
+                  </td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2 text-gray-600">Delivery Charges</td>
+                  <td className="py-2 text-right font-medium text-gray-800">
+                    {deliveryCharges}
+                  </td>
+                </tr>
+                <tr className="border-t font-semibold text-gray-900">
+                  <td className="py-3">Total</td>
+                  <td className="py-3 text-right text-lg">{finalTotal}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
           <div className="border p-4 rounded">
             <h3 className="font-bold mb-2">Payment Method</h3>
             <div className="flex gap-4">

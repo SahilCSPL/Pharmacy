@@ -15,7 +15,6 @@ const ShopPage = () => {
   const searchParams = useSearchParams();
   // Get the "category" query parameter (if provided)
   const categoryId = searchParams.get("category");
-  console.log("Cat id", categoryId);
 
   const [filters, setFilters] = useState({
     category: "",

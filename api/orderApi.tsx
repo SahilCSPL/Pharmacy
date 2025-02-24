@@ -94,7 +94,7 @@ export interface OrderDetailsResponse {
   results: OrderDetail[];
 }
 
-export const getOrderDetails = async (
+export const getAllOrderDetails = async (
   page: number,
   page_size: number,
   customer_id: number,
@@ -104,3 +104,15 @@ export const getOrderDetails = async (
   const data = await APICore<OrderDetailsResponse>(endpoint, "GET", {}, token);
   return data;
 };
+
+export const getOrderDetails =  async (
+  page: number,
+  page_size: number,
+  customer_id: number,
+  token: string,
+  order_id: string
+) : Promise<OrderDetailsResponse> => {
+  const endpoint = `/order/get-customer-orders/?page=${page}&page_size=${page_size}&customer_id=${customer_id}&order_id=${order_id}`;
+  const data = await APICore<OrderDetailsResponse>(endpoint, "GET", {}, token);
+  return data;
+}

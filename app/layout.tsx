@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Merriweather } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import ReduxStoreProvider from "./ReduxStoreProvider";
 import Header from "@/components/ClientSideComponent/HeaderComponent/Header";
@@ -8,8 +8,8 @@ import Footer from "@/components/ServerSideComponent/FooterComponent/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const montserrat = Merriweather({
-  variable: "--font-montserrat",
+const montserrat = Roboto({
+  variable: "--font-robot",
   subsets: ["latin"],
   weight: ["300", "400", "700"], // Add desired font weights
 });

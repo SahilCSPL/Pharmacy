@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import {
-  getOrderDetails,
+  getAllOrderDetails,
   OrderDetail,
   OrderDetailsResponse,
 } from "@/api/orderApi"; // Import types if necessary
@@ -17,7 +17,7 @@ export default function OrderInfoTab() {
 
   useEffect(() => {
     if (user.token && user.id) {
-      getOrderDetails(1, 20, user.id, user.token)
+      getAllOrderDetails(1, 20, user.id, user.token)
         .then((data: OrderDetailsResponse) => {
           setOrders(data.results);
           setLoading(false);
