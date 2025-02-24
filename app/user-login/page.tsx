@@ -139,7 +139,7 @@ const LoginPage = () => {
               </button>
             </form>
 
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-start mt-4">
               <p className="text-gray-600">
                 New user?{" "}
                 <button
@@ -150,7 +150,7 @@ const LoginPage = () => {
                 </button>
               </p>
 
-              <p className="text-gray-600">
+              <p className="text-gray-600 hidden">
                 <button
                   onClick={() => router.push("/reset-password")}
                   className="text-[--mainColor] hover:underline"
