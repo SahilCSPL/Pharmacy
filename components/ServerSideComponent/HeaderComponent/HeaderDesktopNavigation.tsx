@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef,useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { getAllCategories } from "@/api/ShopPageApi";
 import { Category } from "@/components/ClientSideComponent/ShopPageComponent.tsx/type";
@@ -39,7 +39,9 @@ export default function HeaderDesktopNavigation() {
   }, []);
 
   const filteredCategories = useMemo(() => {
-    return categories.filter((category) => category.child_categories?.length > 0);
+    return categories.filter(
+      (category) => category.child_categories?.length > 0
+    );
   }, [categories]);
 
   return (
@@ -53,21 +55,28 @@ export default function HeaderDesktopNavigation() {
         ].map((item) =>
           item.name === "Categories" ? (
             <div key={item.name} className="relative flex">
-              <Link
+              {/* <Link
                 href={item.path}
                 className="text-[var(--textColor)] hover:text-[var(--mainColor)] p-2 rounded-md"
               >
                 {item.name}
-              </Link>
+              </Link> */}
               <button
                 ref={buttonRef}
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="true"
-                className="flex items-center text-[var(--textColor)] hover:text-[var(--mainColor)] p-2 rounded-md"
+                className="flex items-center text-[var(--textColor)] hover:text-[var(--mainColor)] p-2 rounded-md pb-3"
               >
-                <span className="ml-1">
-                  <i className={`fa-solid ${isDropdownOpen ? "fa-caret-up" : "fa-caret-down"}`}></i>
+                <p className="p-2">
+                  {item.name}
+                </p>
+                <span className="p-2">
+                  <i
+                    className={`fa-solid ${
+                      isDropdownOpen ? "fa-caret-up" : "fa-caret-down"
+                    }`}
+                  ></i>
                 </span>
               </button>
               {isDropdownOpen && filteredCategories.length > 0 && (
@@ -104,13 +113,15 @@ export default function HeaderDesktopNavigation() {
               )}
             </div>
           ) : (
-            <Link
-              key={item.name}
-              href={item.path}
-              className="text-[var(--textColor)] hover:text-[var(--mainColor)] p-2 rounded-md"
-            >
-              {item.name}
-            </Link>
+            <div key={item.name} className="relative flex items-center justify-center">
+              <Link
+                key={item.name}
+                href={item.path}
+                className="text-[var(--textColor)] hover:text-[var(--mainColor)] p-2 rounded-md"
+              >
+                {item.name}
+              </Link>
+            </div>
           )
         )}
       </nav>

@@ -1,36 +1,32 @@
-"use client";
+"use client"
 
-import React, { useState, FormEvent } from "react";
-import { toast } from "react-toastify";
-import { APICore } from "@/api/APICore";
-import { useDispatch } from "react-redux";
-import { addAddress } from "@/redux/userSlice";
+import { useState, type FormEvent, useEffect } from "react"
+import { toast } from "react-toastify"
+import { APICore } from "@/api/APICore"
+import { useDispatch } from "react-redux"
+import { addAddress, updateAddress } from "@/redux/userSlice"
 
-interface NewAddressData {
-  customer: number;
-  type: string; // "Billing address" or "Delivery address"
-  address: string;
-  locality: string;
-  city: string;
-  state: string;
-  country: string;
-  zipcode: string;
-  created_by: number;
-  is_selected: boolean;
+interface AddressData {
+  id?: number
+  customer: number
+  type: string
+  address: string
+  locality: string
+  city: string
+  state: string
+  country: string
+  zipcode: string
+  is_selected: boolean
 }
 
 interface AddressFormProps {
-  // The type will be set by the parent component based on the active tab.
-  addressType: "Billing address" | "Delivery address";
-  // Customer id and created_by can be passed from Redux, for example.
-  customerId: number;
-  createdBy: number;
-  // Authentication token from Redux (or any context)
-  authToken: string;
-  // A callback function to trigger a refresh of the address list once a new address is added
-  onAddressAdded?: () => void;
-  // A callback function to close the form (if using a modal or inline toggle)
-  onClose?: () => void;
+  addressType: "Billing address" | "Delivery address"
+  customerId: number
+  createdBy: number
+  authToken: string
+  onAddressAdded?: () => void
+  onClose?: () => void
+  editingAddress?: AddressData | null
 }
 
 export default function AddressForm({
@@ -40,33 +36,35 @@ export default function AddressForm({
   authToken,
   onAddressAdded,
   onClose,
+  editingAddress,
 }: AddressFormProps) {
-  // Local state for each field
-  const [address, setAddress] = useState("");
-  const [locality, setLocality] = useState("");
-  const [city, setCity] = useState("");
-  const [stateField, setStateField] = useState("");
-  const [country, setCountry] = useState("");
-  const [zipcode, setZipcode] = useState("");
-  const [isSelected, setIsSelected] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [address, setAddress] = useState("")
+  const [locality, setLocality] = useState("")
+  const [city, setCity] = useState("")
+  const [stateField, setStateField] = useState("")
+  const [country, setCountry] = useState("")
+  const [zipcode, setZipcode] = useState("")
+  const [isSelected, setIsSelected] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  // Common styling for inputs and buttons
-  const inputClasses =
-    "w-full p-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-[--mainColor] mb-3";
-  const submitButtonClasses =
-    "bg-[--mainColor] text-white py-2 px-4 rounded-md hover:bg-[--mainHoverColor] transition";
-  const cancelButtonClasses =
-    "bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition";
+  useEffect(() => {
+    if (editingAddress) {
+      setAddress(editingAddress.address)
+      setLocality(editingAddress.locality)
+      setCity(editingAddress.city)
+      setStateField(editingAddress.state)
+      setCountry(editingAddress.country)
+      setZipcode(editingAddress.zipcode)
+      setIsSelected(editingAddress.is_selected)
+    }
+  }, [editingAddress])
 
-  // Handler for form submission
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    // Create the payload according to your API schema
-    const payload: NewAddressData = {
+    e.preventDefault()
+    setLoading(true)
+    const payload: AddressData = {
       customer: customerId,
       type: addressType,
       address,
@@ -75,45 +73,46 @@ export default function AddressForm({
       state: stateField,
       country,
       zipcode,
-      created_by: createdBy,
       is_selected: isSelected,
-    };
+    }
 
     try {
-      const res = await APICore<NewAddressData>(
-        "/user/customer-address/",
-        "POST",
-        payload,
-        authToken
-      );
-      toast.success("Address added successfully!");
-      // Optionally clear the form fields
-      dispatch(addAddress(res));
-      setAddress("");
-      setLocality("");
-      setCity("");
-      setStateField("");
-      setCountry("");
-      setZipcode("");
-      setIsSelected(false);
-      // Trigger a callback to refresh the address list
-      if (onAddressAdded) onAddressAdded();
-      // Close the form if using a modal or inline toggle
-      if (onClose) onClose();
+      let res
+      if (editingAddress) {
+        res = await APICore<AddressData>(
+          `/user/customer-address/${editingAddress.id}/?customer=${customerId}`,
+          "PATCH",
+          payload,
+          authToken,
+        )
+        dispatch(updateAddress(res))
+        toast.success("Address updated successfully!")
+      } else {
+        res = await APICore<AddressData>("/user/customer-address/", "POST", payload, authToken)
+        dispatch(addAddress(res))
+        toast.success("Address added successfully!")
+      }
+
+      if (onAddressAdded) onAddressAdded()
+      if (onClose) onClose()
     } catch (error: any) {
-      console.error("Error adding address:", error);
-      toast.error(error.message || "Error adding address.");
+      console.error("Error saving address:", error)
+      toast.error(error.message || "Error saving address.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  // Common styling for inputs and buttons
+  const inputClasses = "w-full p-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-[--mainColor] mb-3"
+  const submitButtonClasses = "bg-[--mainColor] text-white py-2 px-4 rounded-md hover:bg-[--mainHoverColor] transition"
+  const cancelButtonClasses = "bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition"
+
+  // ... (keep existing JSX code, update button text)
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 p-4 border rounded-lg shadow"
-    >
-      <h3 className="text-lg font-semibold mb-2">{addressType}</h3>
+    <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg shadow">
+      <h3 className="text-lg font-semibold mb-2">{editingAddress ? "Edit Address" : addressType}</h3>
       <div>
         <label className="block text-sm mb-1">Address</label>
         <input
@@ -193,17 +192,14 @@ export default function AddressForm({
         </label>
       </div>
       <div className="flex space-x-4">
-        <button
-          type="submit"
-          disabled={loading}
-          className={submitButtonClasses}
-        >
-          {loading ? "Submitting..." : "Add Address"}
+        <button type="submit" disabled={loading} className={submitButtonClasses}>
+          {loading ? "Submitting..." : editingAddress ? "Update Address" : "Add Address"}
         </button>
         <button type="button" onClick={onClose} className={cancelButtonClasses}>
           Cancel
         </button>
       </div>
     </form>
-  );
+  )
 }
+

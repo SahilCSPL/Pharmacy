@@ -14,6 +14,10 @@ const PUBLIC_URL = process.env.NEXT_PUBLIC_API_URL;
 interface MyCountryData {
   dialCode?: string;
 }
+
+interface OtpResponse {
+  message?: string;
+}
 interface FormData {
   first_name: string;
   last_name: string;
@@ -63,13 +67,16 @@ const Page = () => {
     setOtpLoading(true);
     setOtpSendError("");
     const email = getValues("email");
-    if (!email) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email || !emailPattern.test(email)) {
       const message = "Please provide a valid email address before sending OTP";
       setOtpSendError(message);
       toast.error(message);
       setOtpLoading(false);
       return;
     }
+
     try {
       await APICore("/user/verify-email/customer/send-otp/", "POST", { email });
       setOtpSent(true);
@@ -90,11 +97,25 @@ const Page = () => {
     try {
       const email = getValues("email");
       const otp = getValues("otp");
-      await APICore("/user/verify-email/verify-otp/", "POST", { email, otp });
+
+      // Cast the response to the OtpResponse type
+      const response = (await APICore(
+        "/user/verify-email/verify-otp/",
+        "POST",
+        { email, otp }
+      )) as OtpResponse;
+
+      // Check if the response indicates an invalid OTP.
+      if (response?.message === "Invalid OTP") {
+        throw new Error("Invalid OTP");
+      }
+
+      // If no error, mark OTP as verified.
       setIsOtpVerified(true);
       toast.success("OTP Verified!");
     } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "Invalid OTP";
+      const errMsg =
+        err instanceof Error ? err.message : "OTP Verification failed";
       setOtpVerifyError(errMsg);
       toast.error(errMsg);
     } finally {
@@ -137,11 +158,14 @@ const Page = () => {
         formData.append("profile_picture", selectedFile);
       }
 
-      const response = await fetch(`${PUBLIC_URL}/user/customer-registration/`, {
-        method: "POST",
-        body: formData,
-        // Do NOT set Content-Type header; the browser will set it, including the boundary.
-      });
+      const response = await fetch(
+        `${PUBLIC_URL}/user/customer-registration/`,
+        {
+          method: "POST",
+          body: formData,
+          // Do NOT set Content-Type header; the browser will set it, including the boundary.
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Registration failed");
@@ -207,7 +231,13 @@ const Page = () => {
                 <input
                   type="email"
                   placeholder="Email"
-                  {...register("email", { required: "Email is required" })}
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Invalid email address",
+                    },
+                  })}
                   className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
                 />
                 {errors.email && (
@@ -215,7 +245,13 @@ const Page = () => {
                     {errors.email.message}
                   </p>
                 )}
+                {isOtpVerified && (
+                  <p className="text-green-500 text-sm mt-1">
+                    Email Verified successfully
+                  </p>
+                )}
               </div>
+              {!isOtpVerified &&
               <button
                 type="button"
                 onClick={sendOtp}
@@ -224,11 +260,12 @@ const Page = () => {
               >
                 {otpLoading ? "Processing..." : "Send OTP"}
               </button>
+              }
             </div>
             {otpSendError && (
               <p className="text-red-500 text-sm mt-1">{otpSendError}</p>
             )}
-            {otpSent && (
+            {otpSent && !isOtpVerified && (
               <div>
                 <input
                   type="text"
@@ -241,6 +278,7 @@ const Page = () => {
                     {errors.otp.message}
                   </p>
                 )}
+                
                 <button
                   type="button"
                   onClick={verifyOtp}
@@ -255,42 +293,6 @@ const Page = () => {
               </div>
             )}
 
-            {/* Country Code and Phone Number fields in one row */}
-            {/* <Controller
-            name="fullPhone"
-            control={control}
-            rules={{ required: "Phone number is required" }}
-            render={({ field: { onChange, value } }) => (
-              <PhoneInput
-                country={"us"}
-                value={value}
-                onChange={(value, country) => {
-                  // Extract the dial code from the selected country.
-                  const dial = country?.dialCode || "";
-                  const dialWithPlus = dial ? +${dial} : "";
-
-                  // Remove the dial code from the full input to get the local number.
-                  let localNumber = value;
-                  if (dial) {
-                    // Check if value starts with the dial code with or without a plus sign.
-                    if (value.startsWith(dialWithPlus)) {
-                      localNumber = value.substring(dialWithPlus.length);
-                    } else if (value.startsWith(dial)) {
-                      localNumber = value.substring(dial.length);
-                    }
-                  }
-
-                  // Save the extracted values into separate form fields.
-                  setValue("country_code_for_phone_number", dialWithPlus);
-                  setValue("phone_number", localNumber);
-
-                  // Update the UI value for the PhoneInput.
-                  onChange(value);
-                }}
-                inputStyle={{ width: "100%" }}
-              />
-            )}
-          /> */}
             <div className="flex gap-2 items-start ">
               <div className="w-4/12 md:w-2/12 country-code">
                 <PhoneInput
@@ -317,6 +319,11 @@ const Page = () => {
                   placeholder="Phone number"
                   {...register("phone_number", {
                     required: "Phone number is required",
+                    pattern: {
+                      value: /^\d{10}$/,
+                      message:
+                        "Mobile number must be numeric and exactly 10 digits",
+                    },
                   })}
                   className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
                 />
@@ -335,9 +342,6 @@ const Page = () => {
                 onChange={handleFileChange}
                 className="w-full p-3 border rounded-md text-black"
               />
-              {selectedFile && (
-                <p className="mt-1 text-sm">{selectedFile.name}</p>
-              )}
             </div>
 
             {/* Address Fields */}

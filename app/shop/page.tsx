@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import { APICore } from "@/api/APICore";
 import {
   Category,
@@ -211,7 +210,7 @@ const ShopPage = () => {
       </div>
 
       {/* Mobile Filter Button */}
-      <div className="flex flex-wrap lg:mx-[20px] mt-5 max-w-8xl">
+      <div className="flex flex-wrap lg:mx-[20px] mt-5 max-w-8xl p-4">
         {/* Desktop Sidebar: hidden on mobile */}
         <div className="hidden md:block md:w-1/3 lg:w-1/4 xl:w-1/5 pr-4">
           <h2 className="text-lg font-bold mb-3 p-4 bg-[--mainColor] text-white rounded-lg">
@@ -221,10 +220,10 @@ const ShopPage = () => {
         </div>
 
         {/* Product Grid */}
-        <div className="w-full md:w-2/3 lg:w-3/4 xl:w-4/5 pl-4">
+        <div className="w-full md:w-2/3 lg:w-3/4 xl:w-4/5 md:pl-4">
           {/* Sort Dropdown */}
           <div className="flex jsutify-between md:justify-end items-center pb-4">
-            <div className="block md:hidden px-4 w-1/2">
+            <div className="block md:hidden w-1/2">
               <button
                 onClick={() => setMobileFilterOpen(true)}
                 className="w-full bg-[--mainColor] text-white py-2 rounded-md"

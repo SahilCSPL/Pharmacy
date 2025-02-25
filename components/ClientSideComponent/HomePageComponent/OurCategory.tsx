@@ -39,7 +39,7 @@ export default function OurCategory() {
         </div>
 
         {/* Tab Buttons */}
-        <div className="flex flex-nowrap border-b justify-center overflow-x-auto hiddenScrollbar">
+        <div className="flex flex-nowrap border-b lg:justify-center overflow-x-auto hiddenScrollbar">
           {categories.map((category) => (
             <button
               key={category.id}

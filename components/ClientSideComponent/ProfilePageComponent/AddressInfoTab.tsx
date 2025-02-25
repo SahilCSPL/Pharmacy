@@ -1,50 +1,43 @@
-"use client";
+"use client"
 
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/redux/store";
-import { Address, removeAddress, setDefaultAddress } from "@/redux/userSlice";
-import AddressForm from "./AddressForm"; // Adjust the path accordingly
-import { deleteAddress } from "@/api/ProfilePageApi"; // Adjust the path accordingly
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import type { RootState } from "@/redux/store"
+import { type Address, removeAddress, setDefaultAddress } from "@/redux/userSlice"
+import AddressForm from "./AddressForm"
+import { deleteAddress } from "@/api/ProfilePageApi"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 export default function AddressInfoTabs() {
   // Get all addresses from Redux store
-  const addresses: Address[] = useSelector(
-    (state: RootState) => state.user.addresses
-  );
+  const addresses: Address[] = useSelector((state: RootState) => state.user.addresses)
 
-  const token = useSelector((state: RootState) => state.user.token);
-  const customer = useSelector((state: RootState) => state.user.id);
-  const dispatch = useDispatch();
+  const token = useSelector((state: RootState) => state.user.token)
+  const customer = useSelector((state: RootState) => state.user.id)
+  const dispatch = useDispatch()
 
   // Default to "Delivery" tab for priority
-  const [activeTab, setActiveTab] = useState<"Delivery" | "Billing">(
-    "Delivery"
-  );
+  const [activeTab, setActiveTab] = useState<"Delivery" | "Billing">("Delivery")
 
   // Local state to show/hide the AddressForm
-  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [showAddressForm, setShowAddressForm] = useState(false)
+
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null)
 
   // Filter addresses by type (using case-insensitive check)
-  const billingAddresses = addresses.filter((addr) =>
-    addr.type.toLowerCase().includes("billing")
-  );
-  const deliveryAddresses = addresses.filter((addr) =>
-    addr.type.toLowerCase().includes("delivery")
-  );
+  const billingAddresses = addresses.filter((addr) => addr.type.toLowerCase().includes("billing"))
+  const deliveryAddresses = addresses.filter((addr) => addr.type.toLowerCase().includes("delivery"))
 
   // Based on active tab, pick the corresponding addresses
-  const activeAddresses =
-    activeTab === "Delivery" ? deliveryAddresses : billingAddresses;
+  const activeAddresses = activeTab === "Delivery" ? deliveryAddresses : billingAddresses
 
   // Sort activeAddresses so default addresses appear at the top
   const sortedActiveAddresses = [...activeAddresses].sort((a, b) => {
-    if (a.is_selected && !b.is_selected) return -1;
-    if (!a.is_selected && b.is_selected) return 1;
-    return 0;
-  });
+    if (a.is_selected && !b.is_selected) return -1
+    if (!a.is_selected && b.is_selected) return 1
+    return 0
+  })
 
   // A function to render a single address card.
   // totalCount is the number of addresses for that category.
@@ -56,9 +49,7 @@ export default function AddressInfoTabs() {
       >
         {/* "Default" badge */}
         {address.is_selected && (
-          <span className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 text-xs rounded">
-            Selected
-          </span>
+          <span className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 text-xs rounded">Selected</span>
         )}
         <div className="mt-4">
           <p className="font-bold">{address.address}</p>
@@ -70,7 +61,10 @@ export default function AddressInfoTabs() {
         </div>
         {/* Action buttons */}
         <div className="mt-2 flex flex-wrap">
-          <button className="text-blue-600 hover:underline flex items-center space-x-1 text-sm pe-4">
+          <button
+            onClick={() => setEditingAddress(address)}
+            className="text-blue-600 hover:underline flex items-center space-x-1 text-sm pe-4"
+          >
             <i className="fas fa-edit"></i>
             <span>Edit</span>
           </button>
@@ -79,22 +73,14 @@ export default function AddressInfoTabs() {
               <button
                 onClick={async () => {
                   try {
-                    const res = await deleteAddress(
-                      address.id as number,
-                      customer || 0,
-                      token || ""
-                    );
-                    console.log("Delete response:", res);
-                    toast.success(
-                      res.message || "Address removed successfully!"
-                    );
+                    const res = await deleteAddress(address.id as number, customer || 0, token || "")
+                    console.log("Delete response:", res)
+                    toast.success(res.message || "Address removed successfully!")
                     // Dispatch removeAddress to update Redux store immediately
-                    dispatch(
-                      removeAddress({ addressId: address.id as number })
-                    );
+                    dispatch(removeAddress({ addressId: address.id as number }))
                   } catch (error: any) {
-                    console.error("Error removing address:", error);
-                    toast.error(error.message || "Error removing address.");
+                    console.error("Error removing address:", error)
+                    toast.error(error.message || "Error removing address.")
                   }
                 }}
                 className="text-red-600 hover:underline flex items-center space-x-1 text-sm pe-4"
@@ -108,7 +94,7 @@ export default function AddressInfoTabs() {
                     setDefaultAddress({
                       addressId: address.id as number,
                       type: address.type,
-                    })
+                    }),
                   )
                 }
                 className="text-green-600 hover:underline flex items-center space-x-1 text-sm"
@@ -120,8 +106,8 @@ export default function AddressInfoTabs() {
           )}
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   // Render the "Add New Address" card.
   const renderAddNewCard = () => {
@@ -136,8 +122,8 @@ export default function AddressInfoTabs() {
         </span>
         <span>Add New Address</span>
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className="">
@@ -164,11 +150,7 @@ export default function AddressInfoTabs() {
         <div className="p-4">
           {showAddressForm ? (
             <AddressForm
-              addressType={
-                activeTab === "Delivery"
-                  ? "Delivery address"
-                  : "Billing address"
-              }
+              addressType={activeTab === "Delivery" ? "Delivery address" : "Billing address"}
               customerId={customer || 0}
               createdBy={customer || 0}
               authToken={token || ""}
@@ -178,9 +160,7 @@ export default function AddressInfoTabs() {
           ) : sortedActiveAddresses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {renderAddNewCard()}
-              {sortedActiveAddresses.map((address) =>
-                renderAddressCard(address, sortedActiveAddresses.length)
-              )}
+              {sortedActiveAddresses.map((address) => renderAddressCard(address, sortedActiveAddresses.length))}
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
@@ -197,42 +177,39 @@ export default function AddressInfoTabs() {
         <div className="w-1/4 border-r border-gray-200">
           <div
             onClick={() => setActiveTab("Delivery")}
-            className={`p-4 cursor-pointer ${
-              activeTab === "Delivery" ? "bg-gray-100 font-bold" : ""
-            }`}
+            className={`p-4 cursor-pointer ${activeTab === "Delivery" ? "bg-gray-100 font-bold" : ""}`}
           >
             Delivery Address
           </div>
           <div
             onClick={() => setActiveTab("Billing")}
-            className={`p-4 cursor-pointer ${
-              activeTab === "Billing" ? "bg-gray-100 font-bold" : ""
-            }`}
+            className={`p-4 cursor-pointer ${activeTab === "Billing" ? "bg-gray-100 font-bold" : ""}`}
           >
             Billing Address
           </div>
         </div>
         {/* Right content area */}
         <div className="w-3/4 pb-4 pl-4">
-          {showAddressForm ? (
+          {showAddressForm || editingAddress ? (
             <AddressForm
-              addressType={
-                activeTab === "Delivery"
-                  ? "Delivery address"
-                  : "Billing address"
-              }
+              addressType={activeTab === "Delivery" ? "Delivery address" : "Billing address"}
               customerId={customer || 0}
               createdBy={customer || 0}
               authToken={token || ""}
-              onAddressAdded={() => setShowAddressForm(false)}
-              onClose={() => setShowAddressForm(false)}
+              onAddressAdded={() => {
+                setShowAddressForm(false)
+                setEditingAddress(null)
+              }}
+              onClose={() => {
+                setShowAddressForm(false)
+                setEditingAddress(null)
+              }}
+              editingAddress={editingAddress}
             />
           ) : sortedActiveAddresses.length > 0 ? (
             <div className="grid grid-cols-2 gap-4">
               {renderAddNewCard()}
-              {sortedActiveAddresses.map((address) =>
-                renderAddressCard(address, sortedActiveAddresses.length)
-              )}
+              {sortedActiveAddresses.map((address) => renderAddressCard(address, sortedActiveAddresses.length))}
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-4">
@@ -243,5 +220,6 @@ export default function AddressInfoTabs() {
         </div>
       </div>
     </div>
-  );
+  )
 }
+

@@ -216,17 +216,17 @@ const CheckoutPage = () => {
     };
 
     try {
-      if (token) {
-        const orderResponse = await placeOrderAPI(orderPayload, token);
+      // if (token) {
+        const orderResponse = await placeOrderAPI(orderPayload, token!);
         toast.success(orderResponse.message);
         if (orderResponse.message === "Order placed successfully") {
           dispatch(clearCart());
           // dispatch(re)
           router.push(`/thankyou?orderId=${orderResponse.order_id}`);
         }
-      } else {
-        toast.success("Order placed successfully! (Demo)");
-      }
+      // } else {
+      //   toast.success("Order placed successfully! (Demo)");
+      // }
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("Error placing order. Please try again.");

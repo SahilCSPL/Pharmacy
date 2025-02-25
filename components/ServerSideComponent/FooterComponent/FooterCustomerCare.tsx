@@ -6,8 +6,8 @@ type CustomerCareLink = {
 };
 
 const customerCareLinks: CustomerCareLink[] = [
-  { label: "Login", href: "/login" },
-  { label: "Register", href: "/register" },
+  { label: "Login", href: "/user-login" },
+  { label: "Register", href: "/user-register" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact Us", href: "/contact_us"},
   { label: "Terms & Condition", href: "/terms_and_conditon" },
