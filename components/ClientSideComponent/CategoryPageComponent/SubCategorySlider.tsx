@@ -44,7 +44,7 @@ export default function SubCategorySlider({
                   objectFit="cover"
                 />
               </div>
-              <p className="mt-2 text-center font-semibold">
+              <p className="mt-2 text-center font-semibold text-[--mainColor]">
                 {subCategory.name}
               </p>
             </div>

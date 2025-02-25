@@ -13,7 +13,7 @@ const slides = [
     id: 1,
     title: "Your Trusted Online Pharmacy",
     subtitle: "Order medicines easily with doorstep delivery",
-    image: "/new-banner-2.png",
+    image: "/new-banner-2.webp",
     styling: "text-center md:w-1/2", // Ensure this exists in your public folder
     styling2: "",
     styling3: "justify-center",
@@ -23,7 +23,7 @@ const slides = [
     id: 2,
     title: "Exclusive Discounts on Medicines",
     subtitle: "Get up to 30% off on selected products",
-    image: "/new-banner-1.png", // Use a valid image
+    image: "/new-banner-1.webp", // Use a valid image
     styling: "md:w-1/2 text-center md:text-left",
     styling2: "md:w-1/2",
     styling3: "",
@@ -33,7 +33,7 @@ const slides = [
     id: 3,
     title: "Safe & Secure Medicine Delivery",
     subtitle: "We ensure 100% authenticity in all products",
-    image: "/new-banner-33.png",
+    image: "/new-banner-33.webp",
     styling: "md:w-1/2 text-center md:text-left",
     styling2: "md:w-1/2",
     styling3: "",

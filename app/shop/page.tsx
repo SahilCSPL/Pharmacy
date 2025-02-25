@@ -196,7 +196,7 @@ const ShopPage = () => {
         className="h-[400px] bg-cover bg-center py-5 lg:py-10 flex justify-center items-center flex-col"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/background/testimonial-bg.jpg)",
+            "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/background/testimonial-bg.webp)",
         }}
       >
         <h1 className="text-white text-4xl font-bold">Our Products</h1>

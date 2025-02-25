@@ -86,11 +86,10 @@ export default function CategoryPage() {
   if (!category) return <div>Category not found{categoryId}</div>;
 
   return (
-    <section>
+    <section className="">
       <CategoryBanner category={category} />
       <div className="container mx-auto px-4 py-4">
-        <Breadcrumb category={category} />
-        <div className="flex flex-col md:flex-row gap-8 mt-4 border">
+        <div className="flex flex-col md:flex-row gap-8 mt-3">
           <div className="w-full">
             <SubCategorySlider
               subCategories={category.child_categories}

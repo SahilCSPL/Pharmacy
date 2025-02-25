@@ -28,10 +28,10 @@ const Header = () => {
   return (
     <header
       className={`sticky top-0 left-0 w-full transition-all duration-300 z-50 bg-white border-b ${
-        isScrolled ? "shadow-md" : "py-2"
+        isScrolled ? "shadow-mdv py-1" : "py-2"
       }`}
     >
-      <div className="container mx-auto flex justify-between items-center py-3 px-4 md:px-8">
+      <div className="container mx-auto flex justify-between items-center  px-4 md:px-8">
         {/* Logo */}
         <HeaderLogo />
 
