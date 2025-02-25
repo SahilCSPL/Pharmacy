@@ -8,7 +8,7 @@ interface TestimonialCardProps {
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
   return (
-    <div className="p-6 rounded-lg shadow-md flex flex-col items-center bg-white/30 backdrop-blur-md">
+    <div className="h-full p-6 rounded-lg shadow-md flex flex-col items-center bg-white/30 backdrop-blur-md h-full">
       <div className="border-[7px] border-white w-[100px] h-[100px] rounded-[50%] mb-5">
         <Image
           src={testimonial.image}

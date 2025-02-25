@@ -14,6 +14,9 @@ import AddressForm from "@/components/ClientSideComponent/ProfilePageComponent/A
 import CartProductsSummary from "@/components/ClientSideComponent/CartComponent/CartSummery";
 import { clearCart } from "@/redux/cartSlice";
 import { useRouter } from "next/navigation";
+import { div } from "framer-motion/client";
+import Lottie from "lottie-react";
+import emptyCart from "@/public/animation/Animation - 1740402945831.json";
 
 const CheckoutPage = () => {
   // Router for redirection
@@ -65,6 +68,20 @@ const CheckoutPage = () => {
 
   // For guest users, we assume cart details come from the Redux cart slice
   const localCart = useSelector((state: RootState) => state.cart);
+
+  // Derive the cart items array based on whether the user is logged in or not.
+  const cartItems = token ? cartData?.products || [] : localCart.cartItems;
+
+  useEffect(() => {
+    if (token) {
+      // Wait until cartData is loaded.
+      if (!cartData) return;
+      if (localCart.cartItems.length === 0) {
+        router.push("/shop");
+      }
+    }
+  }, [token, cartData, localCart.cartItems, router]);
+
   // Fetch cart and addresses if logged in
   useEffect(() => {
     if (token && customer) {
@@ -216,17 +233,25 @@ const CheckoutPage = () => {
     }
   };
 
+  const handleShop = async () => {
+    router.push("/shop");
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+      <h1 className="text-3xl font-bold mb-6">You're almost there...!</h1>
       <div className="flex flex-col md:flex-row gap-8">
         {/* Left Section: Address Details */}
-        <div className="w-full md:w-2/3 border p-4 rounded space-y-6">
-          <h2 className="text-2xl font-bold">Delivery & Billing Details</h2>
+        <div className="w-full md:w-2/3 border rounded space-y-3">
+          <h2 className="text-2xl font-bold bg-[--mainColor] text-white p-4">
+            Delivery & Billing Details
+          </h2>
           {token && addresses ? (
-            <>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Delivery Address</h3>
+            <div className="p-4">
+              <div className="mb-4">
+                <h3 className="text-xl font-semibold mb-2 text-[--mainColor]">
+                  Delivery Address
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Add Address Option */}
                   <div
@@ -287,8 +312,10 @@ const CheckoutPage = () => {
                     ))}
                 </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Billing Address</h3>
+              <div className="mb-4">
+                <h3 className="text-xl font-semibold mb-2 text-[--mainColor]">
+                  Billing Address
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Add Address Option */}
                   <div
@@ -323,7 +350,7 @@ const CheckoutPage = () => {
                         <p>
                           {addr.city}, {addr.state} {addr.zipcode}
                         </p>
-                        <p>{addr.country}</p>
+                        <p className="pb-3">{addr.country}</p>
                         <div className="flex gap-1">
                           <button className="text-blue-600 text-xs">
                             Edit
@@ -348,12 +375,12 @@ const CheckoutPage = () => {
                     ))}
                 </div>
               </div>
-            </>
+            </div>
           ) : (
             <>
               {/* For guest users, show address forms */}
               <div className="border p-4 rounded">
-                <h3 className="text-xl font-semibold mb-2">
+                <h3 className="text-xl font-semibold mb-2 text-[--mainColor]">
                   Enter Delivery Address
                 </h3>
                 <div className="space-y-2">
@@ -558,54 +585,85 @@ const CheckoutPage = () => {
         </div>
 
         {/* Right Section: Cart & Payment Summary */}
-        <div className="w-full md:w-1/3 border p-4 rounded space-y-6">
-          <div className="border p-4 rounded">
-            <h2 className="text-2xl font-bold">Your Cart</h2>
-            {token && cartData ? (
-              <CartProductsSummary
-                cartItems={localCart.cartItems}
-                token={token}
-                customerId={customer}
-              />
-            ) : (
-              <CartProductsSummary cartItems={localCart.cartItems} />
-            )}
+        <div className="w-full md:w-1/3 space-y-6">
+          <div className="border  rounded">
+            <h2 className="text-2xl font-bold text-white p-4 bg-[--mainColor]">
+              Your Cart
+            </h2>
+            <div className="cart p-4 max-h-[400px] overflow-y-auto">
+              {token && cartData ? (
+                <CartProductsSummary
+                  cartItems={localCart.cartItems}
+                  token={token}
+                  customerId={customer}
+                />
+              ) : (
+                <CartProductsSummary cartItems={localCart.cartItems} />
+              )}
+              <div className="empty-cart">
+                {localCart.cartItems.length < 1 ? (
+                  <div className="flex items-center justify-center h-full flex-col">
+                    <div className="animation-container mx-auto">
+                      <Lottie
+                        animationData={emptyCart}
+                        loop={true}
+                        autoplay={true}
+                        style={{ height: 200, width: 300 }} // Customize the size as needed
+                      />
+                    </div>
+                    <p className="py-3">Oops, your cart is empty.</p>
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <button
+                onClick={handleShop}
+                className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+              >
+                Go Back Shopping
+              </button>
+            </div>
           </div>
-          <div className="border border-gray-300 p-6 rounded-lg shadow-lg bg-white">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <div className="border rounded">
+            <h2 className="text-2xl font-bold text-white p-4 bg-[--mainColor]">
               Order Summary
             </h2>
             <table className="w-full border-collapse">
               <tbody>
                 <tr className="border-b">
-                  <td className="py-2 text-gray-600">Subtotal</td>
-                  <td className="py-2 text-right font-medium text-gray-800">
-                    {subtotal}
+                  <td className="p-2 text-gray-600">Subtotal</td>
+                  <td className="p-2 text-right font-medium text-gray-800">
+                    ₹{subtotal}
                   </td>
                 </tr>
                 <tr className="border-b">
-                  <td className="py-2 text-gray-600">Tax</td>
-                  <td className="py-2 text-right font-medium text-gray-800">
+                  <td className="p-2 text-gray-600">Tax</td>
+                  <td className="p-2 text-right font-medium text-gray-800">
                     {taxPercentage} %
                   </td>
                 </tr>
                 <tr className="border-b">
-                  <td className="py-2 text-gray-600">Delivery Charges</td>
-                  <td className="py-2 text-right font-medium text-gray-800">
-                    {deliveryCharges}
+                  <td className="p-2 text-gray-600">Delivery Charges</td>
+                  <td className="p-2 text-right font-medium text-gray-800">
+                    ₹{deliveryCharges}
                   </td>
                 </tr>
                 <tr className="border-t font-semibold text-gray-900">
-                  <td className="py-3">Total</td>
-                  <td className="py-3 text-right text-lg">{finalTotal}</td>
+                  <td className="py-3 px-2 text-[--mainColor]">Total</td>
+                  <td className="py-3 px-2 text-right text-lg">
+                    ₹{finalTotal}
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div className="border p-4 rounded">
-            <h3 className="font-bold mb-2">Payment Method</h3>
-            <div className="flex gap-4">
+          <div className="border rounded">
+            <h2 className="text-2xl font-bold text-white p-4 bg-[--mainColor]">
+              Payment Method
+            </h2>
+            <div className="flex gap-4 p-4">
               <label className="flex items-center">
                 <input
                   type="radio"
@@ -631,7 +689,7 @@ const CheckoutPage = () => {
           <div>
             <button
               onClick={handlePlaceOrder}
-              className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+              className="w-full bg-[--mainColor] text-white p-4 rounded hover:bg-blue-600 transition"
             >
               Place Order
             </button>

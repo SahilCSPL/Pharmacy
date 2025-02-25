@@ -9,27 +9,28 @@ import FooterSocialMediaLink from "./FooterSocailMediaLink";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#f7f4eb] text-white py-6">
+    <footer className="bg-gray-100 text-white py-6">
       <div className="container mx-auto px-4">
         <div className="flex flex-row flex-wrap justify-between">
           <div className="footer-info w-full md:w-6/12 lg:w-3/12 pr-3 lg:pr-5">
             <FooterLogo />
             <FooterInfoDescription />
-            <FooterInfoLocation />
+
             <FooterSocialMediaLink />
           </div>
-          <div className="footer-company-links w-full md:w-6/12 lg:w-2/12">
-            <FooterCompany />
+          <div className="footer-company-links w-full md:w-6/12 lg:w-3/12">
+            <FooterInfoLocation />
+            {/* <FooterCompany /> */}
           </div>
-          <div className="footer-services w-full md:w-6/12 lg:w-2/12">
+          <div className="footer-services w-full md:w-6/12 lg:w-3/12">
             <FooterServices />
           </div>
-          <div className="customer-care w-full md:w-6/12 lg:w-2/12">
+          <div className="customer-care w-full md:w-6/12 lg:w-3/12">
             <FooterCustomerCare />
           </div>
-          <div className="news-letter w-full md:w-6/12 lg:w-3/12">
+          {/* <div className="news-letter w-full md:w-6/12 lg:w-3/12">
             <FooterNewsletter />
-          </div>
+          </div> */}
         </div>
       </div>
       {/* Copyright */}

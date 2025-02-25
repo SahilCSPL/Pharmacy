@@ -135,7 +135,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="items-center pb-3 px-3 bg-white rounded-[10px] mx-2 shadow-md">
+    <div className="items-center pb-3 px-3 bg-white rounded-[5px] mx-2 border hover:shadow-md transition-transform duration-300 transform">
       <div className="flex pt-3 justify-between">
         <p className="bg-blue-100 text-[--mainColor] px-2 py-1 text-[10px]">
           {product.base_and_selling_price_difference_in_percent}% off
@@ -153,13 +153,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       <Link href={productUrl}>
         <div className="mb-[10px] cursor-pointer">
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}${
-              product.images?.[0] || "/default-placeholder.jpg"
-            }`}
+            src={`${process.env.NEXT_PUBLIC_API_URL}${product.images?.[0]}`}
             alt={product.name}
             width={300}
             height={300}
-            className="object-contain w-full h-[100px] lg:h-[150px] py-1 lg:py-3"
+            className="object-contain w-full h-[100px] lg:h-[150px] py-1 lg:py-3 hover:scale-105 transition-transform duration-300 transform"
           />
         </div>
       </Link>
@@ -170,7 +168,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
         </Link>
-        <p className="text-[--textColor] text-[10px] ">
+        <p className="text-[--textColor] text-[14px] ">
           {product.category_name}
         </p>
         <div className="flex items-baseline text-sm">

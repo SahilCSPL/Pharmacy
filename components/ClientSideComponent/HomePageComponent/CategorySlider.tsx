@@ -71,11 +71,12 @@ export default function CategorySlider() {
           1320: { slidesPerView: 6 },
         }}
       >
+        <div className="">
         {categories.map((category, index) => (
-          <SwiperSlide key={category.id}>
-            <Link href="#our-category">
+          <SwiperSlide key={category.id} className="my-3">
+            <Link href={`/category?category_id=${category.id}`}>
               <div
-                className="border-[1px] rounded-[5px] mx-1 lg:mx-2"
+                className="border-[1px] rounded-[5px] mx-1 lg:mx-2 hover:shadow-md transition-transform duration-300 transform"
                 style={{
                   borderColor: headingColors[index % headingColors.length],
                 }}
@@ -102,13 +103,14 @@ export default function CategorySlider() {
                   <img
                     src={`${process.env.NEXT_PUBLIC_API_URL}${category.image}`}
                     alt={category.name}
-                    className="w-full h-[100%] object-contain rounded-md"
+                    className="w-full h-[100%] object-contain rounded-md hover:scale-105 transition-transform duration-300 transform"
                   />
                 </div>
               </div>
             </Link>
           </SwiperSlide>
         ))}
+        </div>
       </Swiper>
     </div>
   );

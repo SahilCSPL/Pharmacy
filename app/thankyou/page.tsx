@@ -65,7 +65,7 @@ const ThankYouPage = () => {
   }
 
   return (
-    <div className="container flex flex-col justify-center mx-auto p-5">
+    <div className="container flex flex-col justify-center mx-auto p-5 max-w-6xl">
       <div className="animation-container mx-auto">
         <Lottie
           animationData={orderPlaced}
@@ -74,21 +74,21 @@ const ThankYouPage = () => {
           style={{ height: 200, width: 300 }} // Customize the size as needed
         />
       </div>
-      <h1 className="text-3xl font-bold text-center">
+      <h1 className="text-3xl font-bold text-center mb-4">
         Thank You for Your Order, {orderDetails.customer_info.first_name}
       </h1>
       <p className="mb-6 text-center">
         A confirmation mail will be sent to you at{" "}
-        {orderDetails.customer_info.email} with your complete order details.
+        <strong>{orderDetails.customer_info.email}</strong> with your complete order details.
       </p>
 
-      <div className="border p-4">
+      <div className="border px-4 py-3">
         <div className="border-b p-4 rounded flex justify-between">
           <h3 className="text-xl font-semibold">
             Order Number: {orderDetails.id}
           </h3>
           <span className="text-xl font-semibold mb-2">
-            <strong>Total:</strong> {orderDetails.order_info.final_total}
+            <strong>Total:</strong> ₹{orderDetails.order_info.final_total}
           </span>
         </div>
 
@@ -121,7 +121,7 @@ const ThankYouPage = () => {
                 <tr className="border-b">
                   <td className="border px-2 py-1 font-semibold">Subtotal:</td>
                   <td className="border px-2 py-1 text-end">
-                    {orderDetails.order_info.sub_total}
+                  ₹{orderDetails.order_info.sub_total}
                   </td>
                 </tr>
                 <tr className="border-b">
@@ -135,7 +135,7 @@ const ThankYouPage = () => {
                     Delivery Charge:
                   </td>
                   <td className="border px-2 py-2 text-end">
-                    {orderDetails.order_info.delivery_charge}
+                  ₹{orderDetails.order_info.delivery_charge}
                   </td>
                 </tr>
                 <tr className="border-b">
@@ -147,7 +147,7 @@ const ThankYouPage = () => {
                 <tr className="border-b">
                   <td className="border px-2 py-2 font-semibold">Total:</td>
                   <td className="border px-2 py-2 text-end">
-                    {orderDetails.order_info.final_total}
+                  ₹{orderDetails.order_info.final_total}
                   </td>
                 </tr>
                 <tr className="border-b">
@@ -184,7 +184,7 @@ const ThankYouPage = () => {
               {orderDetails.items.map((item: any) => (
                 <tr key={item.id} className="border-b">
                   <td className="border px-4 py-2">
-                    <div className="flex">
+                    <div className="flex items-center">
                       <div className="w-[100px]">
                         <Image
                           src={`${process.env.NEXT_PUBLIC_API_URL}${item.image}`}
@@ -198,7 +198,7 @@ const ThankYouPage = () => {
                     </div>
                   </td>
                   <td className="border px-4 py-2 text-end">
-                    {item.unit_price}
+                  ₹{item.unit_price}
                   </td>
                   <td className="border px-4 py-2 text-end">{item.quantity}</td>
                 </tr>

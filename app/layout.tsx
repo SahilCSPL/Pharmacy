@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Rubik, Rubik_Beastly } from "next/font/google";
 import "./globals.css";
 import ReduxStoreProvider from "./ReduxStoreProvider";
 import Header from "@/components/ClientSideComponent/HeaderComponent/Header";
@@ -8,8 +8,7 @@ import Footer from "@/components/ServerSideComponent/FooterComponent/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const montserrat = Roboto({
-  variable: "--font-robot",
+const rubik = Rubik({
   subsets: ["latin"],
   weight: ["300", "400", "700"], // Add desired font weights
 });
@@ -28,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={montserrat.variable}>
+    <html lang="en" className={rubik.className}>
       <head>
         <link
           rel="stylesheet"

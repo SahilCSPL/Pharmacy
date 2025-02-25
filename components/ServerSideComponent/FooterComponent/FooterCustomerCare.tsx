@@ -7,17 +7,18 @@ type CustomerCareLink = {
 
 const customerCareLinks: CustomerCareLink[] = [
   { label: "Login", href: "/login" },
-  { label: "My account", href: "/my-account" },
-  { label: "Wish List", href: "/wish-list" },
+  { label: "Register", href: "/register" },
   { label: "FAQ", href: "/faq" },
-  { label: "Contact us", href: "/contact-us" },
+  { label: "Contact Us", href: "/contact_us"},
+  { label: "Terms & Condition", href: "/terms_and_conditon" },
+  { label: "Privacy Policy", href: "/privacy_policy" },
 ] as CustomerCareLink[];
 
 const FooterCustomerCare = () => {
   return (
     <div>
       <h4 className="text-lg font-semibold text-[--textColor] h-[40px] mb-[10px] flex items-center">
-        Customer Care
+        Links
       </h4>
       <ul className="text-sm">
         {customerCareLinks.map(({ label, href }) => (

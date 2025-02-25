@@ -92,16 +92,16 @@ const CartProductsSummary: React.FC<CartProductsSummaryProps> = ({
               />
               <div className="flex-1">
                 <div className="flex justify-between items-start">
-                  <h3 className="font-semibold">{item.name}</h3>
+                  <h3 className="font-semibold text-lg">{item.name}</h3>
                   <button
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       handleRemoveItem(item.id);
                     }}
-                    className="text-red-500 text-sm font-bold"
+                    className="bg-red-500 text-sm font-bold px-2 py-1 rounded hover:bg-red-700 transition"
                   >
-                    X
+                    <i className="fa-solid fa-xmark text-white"></i>
                   </button>
                 </div>
                 <div className="flex justify-between mt-1">
@@ -112,18 +112,18 @@ const CartProductsSummary: React.FC<CartProductsSummaryProps> = ({
                         e.stopPropagation();
                         handleUpdateQuantity(item.id, item.quantity - 1);
                       }}
-                      className="px-2 py-1 bg-[--mainColor] text-white rounded"
+                      className="px-3 py-1 bg-[--mainColor] text-white rounded"
                     >
-                      –
+                      -
                     </button>
-                    <span>{item.quantity}</span>
+                    <span className="font-semibold px-1">{item.quantity}</span>
                     <button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         handleUpdateQuantity(item.id, item.quantity + 1);
                       }}
-                      className="px-2 py-1 bg-[--mainColor] text-white rounded"
+                      className="px-3 py-1 bg-[--mainColor] text-white rounded"
                     >
                       +
                     </button>
@@ -140,9 +140,11 @@ const CartProductsSummary: React.FC<CartProductsSummaryProps> = ({
           );
         })}
       </ul>
-      <div className="mt-4 border-t pt-4">
-        <p className="text-lg font-bold">Subtotal: {subtotal.toFixed(2)}</p>
-      </div>
+      {cartItems.length > 0 && (
+        <div className="mt-4 pt-4 text-end">
+          <p className="text-lg font-bold">Subtotal: {subtotal.toFixed(2)}</p>
+        </div>
+      )}
     </div>
   );
 };

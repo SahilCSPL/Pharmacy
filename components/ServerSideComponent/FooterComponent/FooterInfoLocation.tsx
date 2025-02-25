@@ -16,21 +16,26 @@ const contactInfo = [
 
 const FooterInfoLocation = () => {
   return (
-    <ul className="text-sm space-y-2 mb-[10px]">
-      {contactInfo.map((item, index) => (
-        <li key={index} className="flex items-center gap-2">
-          <span className="text-lg text-[--blackPrimary]">{item.icon}</span>
-          <a
-            href={item.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[--textColor] hover:text-[--mainColor] transition duration-300 text-[16px]"
-          >
-            {item.text}
-          </a>
-        </li>
-      ))}
-    </ul>
+    <div>
+      <h4 className="text-lg font-semibold text-[--textColor] h-[40px] mb-[10px] flex items-center">
+        Contact Us
+      </h4>
+      <ul className="text-sm space-y-2 mb-[10px]">
+        {contactInfo.map((item, index) => (
+          <li key={index} className="flex items-center gap-2">
+            <span className="text-lg text-[--blackPrimary]">{item.icon}</span>
+            <a
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[--textColor] hover:text-[--mainColor] transition duration-300 text-[16px]"
+            >
+              {item.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

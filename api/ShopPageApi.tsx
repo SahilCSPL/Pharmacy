@@ -25,6 +25,11 @@ export const getCategoryWiseProducts = async (categoryId: string) => {
   return data;
 };
 
+export const searchProducts = async (search: string) => {
+  const endpoint = `/frontend/products/?search=${encodeURIComponent(search)}`;
+  const data = await APICore<{ products: Product[] }>(endpoint, "GET");
+  return data;
+}
 
 export interface ProductVariant {
   id: number;
@@ -58,3 +63,5 @@ export const getProductInfoByid = async (id: number): Promise<ProductInfo> => {
   const data = await APICore<ProductInfo>(endpoint, "GET");
   return data;
 };
+
+

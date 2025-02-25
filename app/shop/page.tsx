@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { APICore } from "@/api/APICore";
 import {
@@ -13,6 +13,7 @@ import ProductCard from "@/components/ServerSideComponent/HomePageComponent/Prod
 
 const ShopPage = () => {
   const searchParams = useSearchParams();
+  const router = useRouter(); // Initialize useRouter
   // Get the "category" query parameter (if provided)
   const categoryId = searchParams.get("category");
 
@@ -39,6 +40,15 @@ const ShopPage = () => {
       }));
     }
   }, [categoryId]);
+
+  // Remove the query parameter from the URL after using it
+  useEffect(() => {
+    if (categoryId) {
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.delete("category");
+      router.replace(currentUrl.toString());
+    }
+  }, [categoryId, router]);
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -201,7 +211,6 @@ const ShopPage = () => {
       </div>
 
       {/* Mobile Filter Button */}
-
       <div className="flex flex-wrap lg:mx-[20px] mt-5 max-w-8xl">
         {/* Desktop Sidebar: hidden on mobile */}
         <div className="hidden md:block md:w-1/3 lg:w-1/4 xl:w-1/5 pr-4">
