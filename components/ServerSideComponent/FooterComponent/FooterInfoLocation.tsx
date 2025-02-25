@@ -3,14 +3,14 @@ import { FaEnvelope } from "react-icons/fa6";
 const contactInfo = [
   {
     icon: <FaMapMarkerAlt />,
-    text: "1011 Camp, Pune",
+    text: "Sacred World, Office #: 707, South Block, Wanwadi, Pune, Maharashtra",
     href: "https://www.google.com/maps/search/?api=1&query=123+Business+Street,+NY",
   },
-  { icon: <FaPhoneAlt />, text: "+91 91584 86184", href: "tel:+9158486184" },
+  { icon: <FaPhoneAlt />, text: "+91 900 499 1455", href: "tel:+919004991455" },
   {
     icon: <FaEnvelope />,
-    text: "parvezsayyad0045@gmail.com",
-    href: "mailto:parvezsayyad0045@gmail.com",
+    text: "sales@consociatesolutions.com",
+    href: "mailto:sales@consociatesolutions.com",
   },
 ];
 
