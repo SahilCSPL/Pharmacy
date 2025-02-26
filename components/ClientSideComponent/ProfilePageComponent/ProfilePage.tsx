@@ -13,7 +13,7 @@ import OrderInfoTab from "@/components/ServerSideComponent/ProfilePageComponent/
 import WishlistInfoTab from "@/components/ServerSideComponent/ProfilePageComponent/WishlistInfoTab";
 import ChangePasswordTab from "./ChangePasswordTab";
 import AddressInfoTab from "./AddressInfoTab";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // Update the interface to allow for undefined fields (matching your Redux slice)
 interface UserData {
@@ -31,7 +31,7 @@ export default function ProfilePage() {
   const searchParams = useSearchParams();
   // Get the "tab" query parameter (if provided)
   const queryTab = searchParams.get("tab");
-
+const router = useRouter();
   // Fetch user data from Redux store
   const user: UserData = useSelector((state: RootState) => state.user);
   useEffect(() => {
@@ -45,6 +45,8 @@ export default function ProfilePage() {
         .catch((error) => {
           console.error("Error fetching addresses:", error);
         });
+    } else {
+      router.push("/user-login")
     }
   }, [user.token, user.id, dispatch]);
 

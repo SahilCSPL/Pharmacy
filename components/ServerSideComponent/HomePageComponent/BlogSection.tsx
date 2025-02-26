@@ -57,10 +57,11 @@ const blogs: Blog[] = [
 
 const BlogSection: React.FC = () => {
   return (
-    <section className="container mx-auto py-5 lg:py-10">
+    <section className="container mx-auto py-4 lg:py-5">
       {/* Header Section */}
       <div className="flex justify-between items-center px-[10px]">
-        <h2 className="text-[20px] lg:text-[40px] text-[--mainColor] font-bold mb-3 lg:mb-5 ">
+        <div></div>
+        <h2 className="text-[20px] lg:text-[40px] text-[--textColor] font-bold ">
           Latest Blogs
         </h2>
         <Link href="/blog">View All</Link>

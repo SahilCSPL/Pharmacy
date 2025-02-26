@@ -200,13 +200,13 @@ const ShopPage = () => {
         }}
       >
         <h1 className="text-white text-4xl font-bold">Our Products</h1>
-        <nav className="text-sm text-white mb-4">
+        {/* <nav className="text-sm text-white mb-4">
           <a href="/" className="text-grey-100 hover:text-[--mainColor]">
             Home
           </a>{" "}
           &gt;
           <span className="ml-2">Shop</span>
-        </nav>
+        </nav> */}
       </div>
 
       {/* Mobile Filter Button */}

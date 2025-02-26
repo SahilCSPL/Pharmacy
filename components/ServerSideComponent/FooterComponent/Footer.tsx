@@ -12,25 +12,22 @@ const Footer = () => {
     <footer className="bg-gray-200 text-white py-6">
       <div className="container mx-auto px-4">
         <div className="flex flex-row flex-wrap justify-between">
-          <div className="footer-info w-full md:w-6/12 lg:w-3/12 pr-3 lg:pr-5">
+          <div className="footer-info w-full md:w-6/12 lg:w-4/12 pr-3 lg:pr-5">
             <FooterLogo />
             <FooterInfoDescription />
 
             <FooterSocialMediaLink />
           </div>
-          <div className="footer-company-links w-full md:w-6/12 lg:w-3/12">
-            <FooterInfoLocation />
-            {/* <FooterCompany /> */}
-          </div>
-          <div className="footer-services w-full md:w-6/12 lg:w-3/12">
+          
+          <div className="footer-services w-full md:w-6/12 lg:w-2/12">
             <FooterServices />
           </div>
-          <div className="customer-care w-full md:w-6/12 lg:w-3/12">
+          <div className="customer-care w-full md:w-6/12 lg:w-2/12">
             <FooterCustomerCare />
           </div>
-          {/* <div className="news-letter w-full md:w-6/12 lg:w-3/12">
-            <FooterNewsletter />
-          </div> */}
+          <div className="footer-company-links w-full md:w-6/12 lg:w-4/12">
+            <FooterInfoLocation />
+          </div>
         </div>
       </div>
       {/* Copyright */}

@@ -30,10 +30,10 @@ export default function OurCategory() {
   );
 
   return (
-    <section className="container mx-auto py-4 lg:py-5 " id="our-category">
+    <section className="container mx-auto py-4 lg:py-5" id="our-category">
       <div className="container mx-auto">
         <div>
-          <h2 className="text-[20px] lg:text-[35px] text-[--mainColor] text-center font-bold">
+          <h2 className="text-[20px] lg:text-[35px] text-[--textColor] text-center font-bold">
             Explore Our Categories
           </h2>
         </div>

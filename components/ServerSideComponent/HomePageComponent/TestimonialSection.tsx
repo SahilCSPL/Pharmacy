@@ -44,7 +44,7 @@ const testimonials: Testimonial[] = [
 const TestimonialSection = () => {
   return (
     <section
-      className="bg-cover bg-center py-5 lg:py-10"
+      className="bg-cover bg-center py-4 lg:py-5"
       style={{
         backgroundImage:
           "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/background/testimonial-bg.jpg)",

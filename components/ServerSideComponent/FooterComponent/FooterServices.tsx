@@ -10,7 +10,6 @@ const serviceLinks: ServiceLink[] = [
   { label: "My Addresses", href: "/profile/?tab=manageAddress" },
   { label: "Wishlist", href: "/profile/?tab=wishlistInfo" },
   { label: "Order info", href: "/profile/?tab=orderInfo" },
-  {label: "Reset password", href: "/profile/?tab=changePassword"}
 ] as ServiceLink[];
 
 const FooterServices = () => {

@@ -171,7 +171,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-[--textColor] text-[14px] ">
           {product.category_name}
         </p>
-        <div className="flex items-baseline text-sm">
+        <div className="flex items-baseline justify-between text-sm">
           <span className="text-red-500 font-bold pe-1">
             {formatPrice(product.base_price)}
           </span>

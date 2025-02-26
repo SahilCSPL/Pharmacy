@@ -66,7 +66,7 @@ export default function ProductSection({
             : "justify-center"
         }`}
       >
-        <div className="w-full md:w-2/3">
+        <div className="w-full lg:w-2/3">
           <ProductSlider products={productData} title={title} />
         </div>
       </div>

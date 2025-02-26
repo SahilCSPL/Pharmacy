@@ -117,7 +117,7 @@ export default function UserButton() {
         {user.token ? (
           <p className="hover:text-white ml-2">{user.first_name}</p>
         ) : (
-          <p className="hover:text-white ml-2">log in</p>
+          <p className="hover:text-white ml-2">Log in</p>
         )}
       </Link>
 

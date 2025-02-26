@@ -54,7 +54,7 @@ export default function CategorySlider() {
   return (
     <div className="category-slider container mx-auto py-5 lg:py-10">
       <div>
-        <h2 className="text-[20px] lg:text-[35px] text-[--mainColor] text-center font-bold mb-3 lg:mb-4">
+        <h2 className="text-[20px] lg:text-[35px] text-[--textColor] text-center font-bold">
           Shop by Category
         </h2>
       </div>
