@@ -9,22 +9,14 @@ import { clearUser } from "@/redux/userSlice";
 import { clearCart } from "@/redux/cartSlice";
 
 interface DropdownMenuProps {
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
   onLogoutClick: () => void;
 }
 
-function DropdownMenu({
-  onMouseEnter,
-  onMouseLeave,
-  onLogoutClick,
-}: DropdownMenuProps) {
+function DropdownMenu({ onLogoutClick }: DropdownMenuProps) {
   return (
     <div
       role="menu"
-      className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20"
     >
       <Link
         href="/profile"
@@ -50,7 +42,15 @@ export default function UserButton() {
   const user = useSelector((state: RootState) => state.user);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const hoverTimeout = useRef<number | null>(null);
+
+  // Toggle dropdown on click (for mobile and desktop)
+  const handleToggleDropdown = () => {
+    if (user.token) {
+      setDropdownOpen((prev) => !prev);
+    } else {
+      router.push("/user-login");
+    }
+  };
 
   // Logout handler: clear user data and optionally redirect.
   const handleLogoutClick = () => {
@@ -78,31 +78,11 @@ export default function UserButton() {
     };
   }, [isDropdownOpen]);
 
-  // Mouse event handlers to control the dropdown display.
-  const handleMouseEnter = () => {
-    if (hoverTimeout.current) {
-      clearTimeout(hoverTimeout.current);
-      hoverTimeout.current = null;
-    }
-    setDropdownOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    hoverTimeout.current = window.setTimeout(() => {
-      setDropdownOpen(false);
-    }, 200); // Adjust delay as needed
-  };
-
   return (
-    <div
-      ref={containerRef}
-      className="relative inline-block"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      {/* Main link: navigates to Profile if logged in; else to Login */}
-      <Link
-        href={user.token ? "/profile" : "/user-login"}
+    <div ref={containerRef} className="relative inline-block">
+      {/* Use a button to toggle dropdown for logged in users */}
+      <button
+        onClick={handleToggleDropdown}
         className="group cursor-pointer hover:bg-[var(--mainColor)] hover:text-white p-2 rounded-md flex items-center"
       >
         {user.token && user.profile_picture ? (
@@ -119,15 +99,11 @@ export default function UserButton() {
         ) : (
           <p className="hover:text-white ml-2">Log in</p>
         )}
-      </Link>
+      </button>
 
-      {/* Show dropdown only if user is logged in */}
+      {/* Render dropdown only if user is logged in and dropdown is open */}
       {user.token && isDropdownOpen && (
-        <DropdownMenu
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onLogoutClick={handleLogoutClick}
-        />
+        <DropdownMenu onLogoutClick={handleLogoutClick} />
       )}
     </div>
   );

@@ -6,6 +6,7 @@ import { getAllCategories } from "@/api/ShopPageApi";
 import { Category } from "@/components/ClientSideComponent/ShopPageComponent.tsx/type";
 
 const navItems = [
+  { name: "Home", path: "/"},
   { name: "Products", path: "/shop" },
   { name: "Health Blog", path: "/blogs" },
   { name: "Contact", path: "/contact" },

@@ -171,7 +171,8 @@ body {
 .login-form input,
 .registration-form input,
 .country-code input,
-.account-form input {
+.account-form input,
+.select-address select {
   border: 1px solid var(--mainColor);
   outline: none;
 }
@@ -187,6 +188,10 @@ body {
 }
 
 .react-tel-input .flag-dropdown {
+  background-color: transparent!important;
+}
+
+.react-tel-input .flag-dropdown:hover {
   background-color: transparent!important;
 }
 

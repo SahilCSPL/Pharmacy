@@ -71,7 +71,7 @@ export default function SearchButton() {
         <FaSearch className="text-[var(--mainColor)]" />
         <input
           type="text"
-          placeholder="Search medicines..."
+          placeholder="Search Medicines..."
           className="bg-transparent outline-none px-2 w-full text-[var(--textColor)]"
           value={query}
           onChange={handleInputChange}

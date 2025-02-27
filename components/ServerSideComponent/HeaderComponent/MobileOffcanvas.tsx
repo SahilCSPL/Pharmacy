@@ -46,7 +46,7 @@ export default function MobileOffcanvas({ isOpen, setIsOpen }: MobileOffcanvasPr
             <div className="lg:hidden" onClick={() => setIsOpen(false)}>
               <WishlistButton/>
             </div>
-            <div className="lg:hidden" onClick={() => setIsOpen(false)}>
+            <div className="lg:hidden">
               <CartOverlay />
             </div>
           </div>

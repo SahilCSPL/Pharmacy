@@ -376,7 +376,7 @@ const Page = () => {
                 <input
                   id="phone_number"
                   type="text"
-                  placeholder="Phone number"
+                  placeholder="Phone Number"
                   {...register("phone_number", {
                     required: "Phone number is required",
                     pattern: {
@@ -442,16 +442,25 @@ const Page = () => {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="pb-3">
-                <input
-                  type="text"
-                  placeholder="Pincode"
-                  {...register("zipcode", { required: "Pincode is required" })}
-                  className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
+
+              {/* Country Dropdown */}
+              <div className="pb-3 select-address">
+                <Controller
+                  control={control}
+                  name="country"
+                  rules={{ required: "Country is required" }}
+                  render={({ field }) => (
+                    <CountryDropdown
+                      value={field.value}
+                      onChange={field.onChange}
+                      className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
+                      defaultOptionLabel="Select Country"
+                    />
+                  )}
                 />
-                {errors.zipcode && (
+                {errors.country && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.zipcode.message}
+                    {errors.country.message}
                   </p>
                 )}
               </div>
@@ -477,27 +486,21 @@ const Page = () => {
                 )}
               </div>
 
-              {/* Country Dropdown */}
               <div className="pb-3">
-                <Controller
-                  control={control}
-                  name="country"
-                  rules={{ required: "Country is required" }}
-                  render={({ field }) => (
-                    <CountryDropdown
-                      value={field.value}
-                      onChange={field.onChange}
-                      className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
-                      defaultOptionLabel="Select Country"
-                    />
-                  )}
+                <input
+                  type="text"
+                  placeholder="Pincode"
+                  {...register("zipcode", { required: "Pincode is required" })}
+                  className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
                 />
-                {errors.country && (
+                {errors.zipcode && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.country.message}
+                    {errors.zipcode.message}
                   </p>
                 )}
               </div>
+
+              
             </div>
 
             {/* Register Button */}

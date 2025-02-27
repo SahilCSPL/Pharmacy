@@ -48,6 +48,7 @@ export default function HeaderDesktopNavigation() {
     <div className="hidden xl:flex items-center space-x-6 flex-grow justify-center">
       <nav className="hidden lg:flex space-x-6 relative">
         {[
+          { name: "Home", path: "/"},
           { name: "Categories", path: "/shop" },
           { name: "Products", path: "/shop" },
           { name: "Health Blog", path: "/blogs" },
@@ -66,7 +67,7 @@ export default function HeaderDesktopNavigation() {
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="true"
-                className="flex items-center text-[var(--textColor)] hover:text-[var(--mainColor)] p-2 rounded-md pb-3"
+                className="flex items-center text-[var(--textColor)] hover:text-[var(--mainColor)] p-2 rounded-md "
               >
                 <p className="p-2">
                   {item.name}
