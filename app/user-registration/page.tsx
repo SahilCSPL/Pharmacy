@@ -258,16 +258,6 @@ const Page = () => {
                   })}
                   className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
-                )}
-                {isOtpVerified && (
-                  <p className="text-green-500 text-sm mt-1">
-                    Email Verified successfully
-                  </p>
-                )}
               </div>
               {!isOtpVerified && (
                 <div className="pb-3 h-full">
@@ -282,6 +272,16 @@ const Page = () => {
                 </div>
               )}
             </div>
+            {errors.email && (
+              <p className="text-red-500 text-sm mb-3">
+                {errors.email.message}
+              </p>
+            )}
+            {isOtpVerified && (
+              <p className="text-green-500 text-sm mt-1 mb-3">
+                Email Verified successfully
+              </p>
+            )}
             {otpSendError && (
               <p className="text-red-500 text-sm mt-1">{otpSendError}</p>
             )}
@@ -442,7 +442,6 @@ const Page = () => {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-
               {/* Country Dropdown */}
               <div className="pb-3 select-address">
                 <Controller
@@ -486,11 +485,18 @@ const Page = () => {
                 )}
               </div>
 
-              <div className="pb-3">
+              <div>
                 <input
                   type="text"
+                  inputMode="numeric"
                   placeholder="Pincode"
-                  {...register("zipcode", { required: "Pincode is required" })}
+                  {...register("zipcode", {
+                    required: "Pincode is required",
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: "Zip code must contain only numbers",
+                    },
+                  })}
                   className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
                 />
                 {errors.zipcode && (
@@ -499,8 +505,6 @@ const Page = () => {
                   </p>
                 )}
               </div>
-
-              
             </div>
 
             {/* Register Button */}

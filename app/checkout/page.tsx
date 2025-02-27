@@ -728,7 +728,7 @@ const CheckoutPage = () => {
       {/* AddressForm Modal */}
       {showAddressForm && addressFormType && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded shadow-lg w-full max-w-md mx-4 overflow-y-auto max-h-full">
+        <div className="bg-white p-6 rounded shadow-lg w-full max-w-md mx-4 overflow-y-auto max-h-full lg:max-h-[90%]">
           <AddressForm
             addressType={
               addressFormType === "delivery"
