@@ -76,6 +76,7 @@ const ShopPage = () => {
       if (categoryId) {
         const data = await getCategoryWiseProducts(categoryId);
         setProducts(data.products);
+        setFilteredProducts(data.products);
       } else {
         const data = await getAllProducts();
         setProducts(data.products);
@@ -104,13 +105,9 @@ const ShopPage = () => {
 
     // Sort products
     if (filters.sort === "price-low-high") {
-      filtered = [...filtered].sort(
-        (a, b) => a.base_price - b.base_price
-      );
+      filtered = [...filtered].sort((a, b) => a.base_price - b.base_price);
     } else if (filters.sort === "price-high-low") {
-      filtered = [...filtered].sort(
-        (a, b) => b.base_price - a.base_price
-      );
+      filtered = [...filtered].sort((a, b) => b.base_price - a.base_price);
     }
 
     setFilteredProducts(filtered);
@@ -133,6 +130,25 @@ const ShopPage = () => {
   // Handle sorting change
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilters((prevFilters) => ({ ...prevFilters, sort: e.target.value }));
+  };
+
+  // Reset filters function
+  const resetFilters = async () => {
+    // Reset the filters state
+    setFilters({
+      category: "",
+      subCategories: [],
+      sort: "",
+    });
+    try {
+      // Fetch all products to show all items
+      const data = await getAllProducts();
+      setProducts(data.products);
+      setFilteredProducts(data.products);
+      setCurrentPage(1);
+    } catch (error) {
+      console.error("Failed to fetch all products:", error);
+    }
   };
 
   // Pagination logic
@@ -186,6 +202,14 @@ const ShopPage = () => {
           )}
         </div>
       ))}
+      <div className="mt-4">
+        <button
+          onClick={resetFilters}
+          className="w-full bg-[--mainColor] text-white py-2 rounded-md"
+        >
+          Reset Filters
+        </button>
+      </div>
     </div>
   );
 
@@ -200,13 +224,6 @@ const ShopPage = () => {
         }}
       >
         <h1 className="text-white text-4xl font-bold">Our Products</h1>
-        {/* <nav className="text-sm text-white mb-4">
-          <a href="/" className="text-grey-100 hover:text-[--mainColor]">
-            Home
-          </a>{" "}
-          &gt;
-          <span className="ml-2">Shop</span>
-        </nav> */}
       </div>
 
       {/* Mobile Filter Button */}
@@ -232,7 +249,9 @@ const ShopPage = () => {
               </button>
             </div>
             <div className="md:mt-4 flex flex-col md:flex-row items-center  justify-end md:mb-3 w-1/2">
-              <label className="block font-semibold mx-2 md:mx-4 text-sm md:text-base">Sort by:</label>
+              <label className="block font-semibold mx-2 md:mx-4 text-sm md:text-base">
+                Sort by:
+              </label>
               <select
                 className="border rounded p-2 w-[120px] md:w-[180px] mt-1"
                 value={filters.sort}
@@ -285,12 +304,20 @@ const ShopPage = () => {
               </button>
             </div>
             {filterContent}
-            <button
-              onClick={() => setMobileFilterOpen(false)}
-              className="mt-4 w-full bg-[--mainColor] text-white py-2 rounded-md"
-            >
-              Apply Filters
-            </button>
+            {/* <div className="mt-4 flex space-x-2">
+              <button
+                onClick={resetFilters}
+                className="w-full bg-[--mainColor] text-white py-2 rounded-md"
+              >
+                Reset Filters
+              </button>
+              <button
+                onClick={() => setMobileFilterOpen(false)}
+                className="w-full bg-[--mainColor] text-white py-2 rounded-md"
+              >
+                Apply Filters
+              </button>
+            </div> */}
           </div>
           {/* Clicking outside the sidebar closes the filter */}
           <div

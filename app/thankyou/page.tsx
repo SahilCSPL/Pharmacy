@@ -91,7 +91,7 @@ const ThankYouPage = () => {
             Order Number: {orderDetails.id}
           </h3>
           <span className="hidden md:block text-base md:text-xl font-semibold">
-            <strong>Total:</strong> ₹{orderDetails.order_info.final_total}
+            <strong>Total:</strong> ₹{orderDetails.order_info.final_total.toFixed(2)}
           </span>
         </div>
 
@@ -125,13 +125,13 @@ const ThankYouPage = () => {
                   <tr className="border-b">
                     <td className="border px-2 py-1 font-semibold">Subtotal:</td>
                     <td className="border px-2 py-1 text-end">
-                      ₹{orderDetails.order_info.sub_total}
+                      ₹{orderDetails.order_info.sub_total.toFixed(2)}
                     </td>
                   </tr>
                   <tr className="border-b">
                     <td className="border px-2 py-2 font-semibold">Tax:</td>
                     <td className="border px-2 py-2 text-end">
-                      {orderDetails.order_info.tax}%
+                      {orderDetails.order_info.tax.toFixed(2)}
                     </td>
                   </tr>
                   <tr className="border-b">
@@ -149,7 +149,7 @@ const ThankYouPage = () => {
                   <tr className="border-b">
                     <td className="border px-2 py-2 font-semibold">Total:</td>
                     <td className="border px-2 py-2 text-end">
-                      ₹{orderDetails.order_info.final_total}
+                      ₹{orderDetails.order_info.final_total.toFixed(2)}
                     </td>
                   </tr>
                   <tr className="border-b">

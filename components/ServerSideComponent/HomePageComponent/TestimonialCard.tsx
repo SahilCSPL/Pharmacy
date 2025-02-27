@@ -8,8 +8,8 @@ interface TestimonialCardProps {
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
   return (
-    <div className="h-full p-6 rounded-lg shadow-md flex flex-col items-center bg-white/30 backdrop-blur-md h-full">
-      <div className="border-[7px] border-white w-[100px] h-[100px] rounded-[50%] mb-5">
+    <div className="min-h-[300px] p-6 rounded-lg shadow-md flex flex-col items-center bg-white/30 backdrop-blur-md">
+      <div className="border-[7px] border-white w-[100px] h-[100px] rounded-full mb-5">
         <Image
           src={testimonial.image}
           alt={testimonial.name}
@@ -18,7 +18,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
           className="rounded-full mb-4 object-cover border-5 border-white"
         />
       </div>
-      <p className="text-white italic mb-4 text-center px-4">
+      <p className="text-white italic mb-4 text-center px-4 flex-grow">
         "{testimonial.comment}"
       </p>
       <h4 className="text-white text-lg font-semibold">

@@ -728,29 +728,30 @@ const CheckoutPage = () => {
       {/* AddressForm Modal */}
       {showAddressForm && addressFormType && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md my-10">
-            <AddressForm
-              addressType={
-                addressFormType === "delivery"
-                  ? "Delivery address"
-                  : "Billing address"
-              }
-              customerId={customer || 0}
-              createdBy={customer || 0}
-              authToken={token || ""}
-              onAddressAdded={() => {
-                setShowAddressForm(false);
-                setEditingAddress(null);
-                fetchAddresses(); // Refresh addresses immediately after update
-              }}
-              onClose={() => {
-                setShowAddressForm(false);
-                setEditingAddress(null);
-              }}
-              editingAddress={editingAddress}
-            />
-          </div>
+        <div className="bg-white p-6 rounded shadow-lg w-full max-w-md mx-4 overflow-y-auto max-h-full">
+          <AddressForm
+            addressType={
+              addressFormType === "delivery"
+                ? "Delivery address"
+                : "Billing address"
+            }
+            customerId={customer || 0}
+            createdBy={customer || 0}
+            authToken={token || ""}
+            onAddressAdded={() => {
+              setShowAddressForm(false);
+              setEditingAddress(null);
+              fetchAddresses(); // Refresh addresses immediately after update
+            }}
+            onClose={() => {
+              setShowAddressForm(false);
+              setEditingAddress(null);
+            }}
+            editingAddress={editingAddress}
+          />
         </div>
+      </div>
+      
       )}
     </div>
   );
