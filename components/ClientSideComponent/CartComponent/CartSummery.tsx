@@ -92,7 +92,7 @@ const CartProductsSummary: React.FC<CartProductsSummaryProps> = ({
               />
               <div className="flex-1">
                 <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-lg">{item.name}</h3>
+                  <h3 className="font-semibold text-base">{item.name}</h3>
                   <button
                     onClick={(e) => {
                       e.preventDefault();
@@ -129,11 +129,11 @@ const CartProductsSummary: React.FC<CartProductsSummaryProps> = ({
                     </button>
                   </div>
                   <div>
-                    <p className="text-sm font-bold">Total: {itemTotal}</p>
+                    <p className="text-sm font-bold">Total: ₹ {itemTotal}</p>
                   </div>
                 </div>
                 <p className="text-sm text-gray-600 mt-1">
-                  {unitPrice.toFixed(2)} / Unit
+                ₹ {unitPrice.toFixed(2)} / Unit
                 </p>
               </div>
             </li>
@@ -142,7 +142,7 @@ const CartProductsSummary: React.FC<CartProductsSummaryProps> = ({
       </ul>
       {cartItems.length > 0 && (
         <div className="mt-4 pt-4 text-end">
-          <p className="text-lg font-bold">Subtotal: {subtotal.toFixed(2)}</p>
+          <p className="text-lg font-bold">Subtotal: ₹ {subtotal.toFixed(2)}</p>
         </div>
       )}
     </div>

@@ -168,7 +168,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
         </Link>
-        <p className="text-[--textColor] text-[14px] ">
+        <p className="text-[--textColor] text-[14px] truncate">
           {product.category_name}
         </p>
         <div className="flex items-baseline justify-between text-sm">

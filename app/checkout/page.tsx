@@ -62,7 +62,9 @@ const CheckoutPage = () => {
 
   // Local state to show AddressForm modal
   const [showAddressForm, setShowAddressForm] = useState<boolean>(false);
-  const [addressFormType, setAddressFormType] = useState<"delivery" | "billing" | null>(null);
+  const [addressFormType, setAddressFormType] = useState<
+    "delivery" | "billing" | null
+  >(null);
 
   // State for editing an address
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
@@ -76,14 +78,19 @@ const CheckoutPage = () => {
   // Reusable function to fetch addresses from the API
   const fetchAddresses = async () => {
     try {
-      const response: CustomerAddressesResponse = await getCustomerAddresses(customer!, token!);
+      const response: CustomerAddressesResponse = await getCustomerAddresses(
+        customer!,
+        token!
+      );
       setAddresses(response.addresses);
       // Update the selected addresses if defaults are set:
       const defaultDelivery = response.addresses.find(
-        (addr) => addr.type.toLowerCase().includes("delivery") && addr.is_selected
+        (addr) =>
+          addr.type.toLowerCase().includes("delivery") && addr.is_selected
       );
       const defaultBilling = response.addresses.find(
-        (addr) => addr.type.toLowerCase().includes("billing") && addr.is_selected
+        (addr) =>
+          addr.type.toLowerCase().includes("billing") && addr.is_selected
       );
       if (defaultDelivery) setSelectedDeliveryAddress(defaultDelivery);
       if (defaultBilling) setSelectedBillingAddress(defaultBilling);
@@ -111,21 +118,38 @@ const CheckoutPage = () => {
   }, [token, customer]);
 
   // Calculate cart subtotal
-  const subtotal =
-    token && cartData
-      ? cartData.products.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0)
-      : localCart.cartItems.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
+  const subtotal = localCart.cartItems.reduce(
+    (sum, item) => sum + parseFloat(item.price) * item.quantity,
+    0
+  );
+
+  useEffect(() => {
+    if (token && customer) {
+      const updateCart = async () => {
+        try {
+          const data = await getCart(customer, token);
+          setCartData(data);
+        } catch (error) {
+          console.error("Error updating cart:", error);
+          toast.error("Error updating cart data.");
+        }
+      };
+      updateCart();
+    }
+  }, [localCart.cartItems, token, customer]);
 
   const deliveryCharges = 110;
   const taxPercentage = 10;
-  const finalTotal = subtotal + subtotal / taxPercentage + deliveryCharges;
+  const tax = subtotal / taxPercentage;
+  const finalTotal = subtotal + tax + deliveryCharges;
 
   // --- Order Placement Handler ---
   const handlePlaceOrder = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
-    const cartItems = token && cartData ? cartData.products : localCart.cartItems;
+    const cartItems =
+      token && cartData ? cartData.products : localCart.cartItems;
     if (!cartItems || cartItems.length === 0) {
       toast.error("Your cart is empty!");
       return;
@@ -176,7 +200,8 @@ const CheckoutPage = () => {
       final_total: finalTotal,
       is_payment_done: paymentMethod === "online" ? true : false,
       payment_transaction_id: paymentMethod === "online" ? "TXN123" : "",
-      payment_type: paymentMethod === "Cash on Delivery" ? "Cash on Delivery" : "Online",
+      payment_type:
+        paymentMethod === "Cash on Delivery" ? "Cash on Delivery" : "Online",
       payment_datetime: new Date().toISOString(),
       billing_address: token
         ? `${selectedBillingAddress?.address}, ${selectedBillingAddress?.locality},${selectedBillingAddress?.city}, ${selectedBillingAddress?.state} ${selectedBillingAddress?.zipcode}, ${selectedBillingAddress?.country}`
@@ -186,7 +211,10 @@ const CheckoutPage = () => {
       delivery_address: token
         ? `${selectedDeliveryAddress?.address}, ${selectedDeliveryAddress?.locality}, ${selectedDeliveryAddress?.city}, ${selectedDeliveryAddress?.state} ${selectedDeliveryAddress?.zipcode}, ${selectedDeliveryAddress?.country}`
         : `${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipcode}, ${shippingAddress.country} - ${shippingAddress.phone}`,
-      products: (token && cartData ? cartData.products : localCart.cartItems).map((item) => ({
+      products: (token && cartData
+        ? cartData.products
+        : localCart.cartItems
+      ).map((item) => ({
         product_id: Number(item.id),
         unit_price: parseFloat(item.price),
         quantity: item.quantity,
@@ -254,17 +282,20 @@ const CheckoutPage = () => {
                     <span>Add Address</span>
                   </div>
                   {addresses
-                    .filter((addr) => addr.type.toLowerCase().includes("delivery"))
+                    .filter((addr) =>
+                      addr.type.toLowerCase().includes("delivery")
+                    )
                     .map((addr) => (
                       <div
                         key={addr.id}
                         className="border p-4 rounded relative cursor-pointer hover:shadow-lg transition"
                       >
-                        {selectedDeliveryAddress && selectedDeliveryAddress.id === addr.id && (
-                          <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
-                            Selected
-                          </span>
-                        )}
+                        {selectedDeliveryAddress &&
+                          selectedDeliveryAddress.id === addr.id && (
+                            <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
+                              Selected
+                            </span>
+                          )}
                         <p className="font-bold pt-3">{addr.address}</p>
                         <p className="font-bold">{addr.locality}</p>
                         <p>
@@ -323,17 +354,20 @@ const CheckoutPage = () => {
                     <span>Add Address</span>
                   </div>
                   {addresses
-                    .filter((addr) => addr.type.toLowerCase().includes("billing"))
+                    .filter((addr) =>
+                      addr.type.toLowerCase().includes("billing")
+                    )
                     .map((addr) => (
                       <div
                         key={addr.id}
                         className="border p-4 rounded relative cursor-pointer hover:shadow-lg transition"
                       >
-                        {selectedBillingAddress && selectedBillingAddress.id === addr.id && (
-                          <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
-                            Selected
-                          </span>
-                        )}
+                        {selectedBillingAddress &&
+                          selectedBillingAddress.id === addr.id && (
+                            <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
+                              Selected
+                            </span>
+                          )}
                         <p className="font-bold">{addr.address}</p>
                         <p className="font-bold">{addr.locality}</p>
                         <p>
@@ -489,7 +523,9 @@ const CheckoutPage = () => {
                 </label>
                 {!billingSame && (
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold mb-2">Enter Billing Address</h3>
+                    <h3 className="text-xl font-semibold mb-2">
+                      Enter Billing Address
+                    </h3>
                     <input
                       type="text"
                       placeholder="Full Name"
@@ -587,7 +623,11 @@ const CheckoutPage = () => {
             </h2>
             <div className="cart p-4 max-h-[400px] overflow-y-auto">
               {token && cartData ? (
-                <CartProductsSummary cartItems={localCart.cartItems} token={token} customerId={customer} />
+                <CartProductsSummary
+                  cartItems={localCart.cartItems}
+                  token={token}
+                  customerId={customer}
+                />
               ) : (
                 <CartProductsSummary cartItems={localCart.cartItems} />
               )}
@@ -622,19 +662,27 @@ const CheckoutPage = () => {
               <tbody>
                 <tr className="border-b">
                   <td className="p-2 text-gray-600">Subtotal</td>
-                  <td className="p-2 text-right font-medium text-gray-800">₹{subtotal}</td>
+                  <td className="p-2 text-right font-medium text-gray-800">
+                    ₹ {subtotal.toFixed(2)}
+                  </td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-2 text-gray-600">Tax</td>
-                  <td className="p-2 text-right font-medium text-gray-800">{taxPercentage} %</td>
+                  <td className="p-2 text-gray-600">Tax (10 %)</td>
+                  <td className="p-2 text-right font-medium text-gray-800">
+                    ₹ {tax.toFixed(2)}
+                  </td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-2 text-gray-600">Delivery Charges</td>
-                  <td className="p-2 text-right font-medium text-gray-800">₹{deliveryCharges}</td>
+                  <td className="p-2 text-right font-medium text-gray-800">
+                    ₹ {deliveryCharges}
+                  </td>
                 </tr>
                 <tr className="border-t font-semibold text-gray-900">
                   <td className="py-3 px-2 text-[--mainColor]">Total</td>
-                  <td className="py-3 px-2 text-right text-lg">₹{finalTotal}</td>
+                  <td className="py-3 px-2 text-right text-lg">
+                    ₹ {finalTotal.toFixed(2)}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -682,7 +730,11 @@ const CheckoutPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
             <AddressForm
-              addressType={addressFormType === "delivery" ? "Delivery address" : "Billing address"}
+              addressType={
+                addressFormType === "delivery"
+                  ? "Delivery address"
+                  : "Billing address"
+              }
               customerId={customer || 0}
               createdBy={customer || 0}
               authToken={token || ""}

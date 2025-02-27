@@ -3,14 +3,14 @@
 import { APICore } from "@/api/APICore";
 import { setUser } from "@/redux/userSlice";
 import React, { useState, FormEvent, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
-// Update the interface to include an email field
 interface UserData {
   id?: number;
   first_name: string | undefined;
   last_name: string | undefined;
-  phone_number: string | undefined; // Keep it as string
+  phone_number: string | undefined;
   profile_picture: string | undefined;
   email: string | undefined;
   token: string | undefined;
@@ -20,45 +20,80 @@ interface AccountInfoTabProps {
   user: UserData;
 }
 
+interface Errors {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+}
+
 export default function AccountInfoTab({ user }: AccountInfoTabProps) {
   // Local state for editable fields with fallbacks
   const [firstName, setFirstName] = useState(user.first_name ?? "");
   const [lastName, setLastName] = useState(user.last_name ?? "");
-  // Convert phone number to string for input if defined
   const [phoneNumber, setPhoneNumber] = useState(
     user.phone_number !== undefined ? user.phone_number.toString() : ""
   );
   const [profilePicture, setProfilePicture] = useState(
     user.profile_picture ?? ""
   );
-  // Email is non-editable so we do not need to update it
   const [email] = useState(user.email ?? "");
 
   // Track whether we are in editing mode
   const [isEditing, setIsEditing] = useState(false);
 
+  // Local error state for validations
+  const [errors, setErrors] = useState<Errors>({
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+  });
+
   // Ref for the hidden file input
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
-  // Function to handle the PATCH update call
-  // Inside the handleAccountInfoSubmit function
-  // Inside the handleAccountInfoSubmit function
+
+  // Function to handle the PATCH update call with validation
   const handleAccountInfoSubmit = async (e?: FormEvent) => {
     if (e) e.preventDefault();
+
+    // Reset errors
+    setErrors({ firstName: "", lastName: "", phoneNumber: "" });
+    let valid = true;
+    const newErrors: Errors = { firstName: "", lastName: "", phoneNumber: "" };
+
+    if (!firstName.trim()) {
+      newErrors.firstName = "First Name is required.";
+      valid = false;
+    }
+    if (!lastName.trim()) {
+      newErrors.lastName = "Last Name is required.";
+      valid = false;
+    }
+    if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = "Phone Number is required.";
+      valid = false;
+    } else if (!/^\d{10}$/.test(phoneNumber.trim())) {
+      newErrors.phoneNumber = "Phone Number must be exactly 10 digits.";
+      valid = false;
+    }
+
+    if (!valid) {
+      setErrors(newErrors);
+      return;
+    }
 
     // Prepare the data to update
     const updatedData = {
       id: user.id,
       first_name: firstName,
       last_name: lastName,
-      phone_number: phoneNumber, // Optionally, convert this to a number if needed
+      phone_number: phoneNumber,
       profile_picture: profilePicture,
       email: email,
     };
 
     try {
-      // Retrieve token (adjust this to match your authentication)
       const data = await APICore<{ success: boolean }>(
         "/user/edit-profile/",
         "PATCH",
@@ -66,10 +101,9 @@ export default function AccountInfoTab({ user }: AccountInfoTabProps) {
         user.token
       );
 
-      // Dispatch action to update the Redux store with the updated user data
       dispatch(
         setUser({
-          ...user, // Spread the existing user state to retain other data
+          ...user,
           id: user.id,
           first_name: firstName,
           last_name: lastName,
@@ -79,10 +113,10 @@ export default function AccountInfoTab({ user }: AccountInfoTabProps) {
         })
       );
 
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
       setIsEditing(false);
     } catch (error) {
-      alert("Error updating profile");
+      toast.error("Error updating profile");
       console.error(error);
     }
   };
@@ -100,7 +134,6 @@ export default function AccountInfoTab({ user }: AccountInfoTabProps) {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfilePicture(imageUrl);
-      // In a real app, you might upload the file here.
     }
   };
 
@@ -108,11 +141,12 @@ export default function AccountInfoTab({ user }: AccountInfoTabProps) {
     <div className="space-y-6 text-[--textColor]">
       {/* Header with title and Edit/Update button */}
       <div className="flex justify-between items-center">
-        <h2 className="text-lg lg:text-xl font-semibold md:mb-4">Account Information</h2>
+        <h2 className="text-lg lg:text-xl font-semibold md:mb-4">
+          Account Information
+        </h2>
         <button
           onClick={() => {
             if (isEditing) {
-              // When editing, clicking Update submits the form
               handleAccountInfoSubmit();
             } else {
               setIsEditing(true);
@@ -143,7 +177,6 @@ export default function AccountInfoTab({ user }: AccountInfoTabProps) {
                   No Image
                 </div>
               )}
-              {/* Overlay (only clickable when editing) */}
               <div
                 className={`absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 transition ${
                   isEditing ? "cursor-pointer" : "cursor-default"
@@ -172,7 +205,6 @@ export default function AccountInfoTab({ user }: AccountInfoTabProps) {
                   </>
                 )}
               </div>
-              {/* Hidden file input */}
               <input
                 type="file"
                 accept="image/*"
@@ -196,6 +228,11 @@ export default function AccountInfoTab({ user }: AccountInfoTabProps) {
                   className="w-full p-2 border rounded-md text-black focus:ring-1 focus:ring-[--mainColor] outline-none"
                   placeholder="Enter first name"
                 />
+                {errors.firstName && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.firstName}
+                  </p>
+                )}
               </div>
               <div className="w-1/2">
                 <label className="block text-sm mb-1">Last Name</label>
@@ -207,6 +244,9 @@ export default function AccountInfoTab({ user }: AccountInfoTabProps) {
                   className="w-full p-2 border rounded-md text-black focus:ring-1 focus:ring-[--mainColor] outline-none"
                   placeholder="Enter last name"
                 />
+                {errors.lastName && (
+                  <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>
+                )}
               </div>
             </div>
 
@@ -220,6 +260,11 @@ export default function AccountInfoTab({ user }: AccountInfoTabProps) {
                 className="w-full p-2 border rounded-md text-black focus:ring-1 focus:ring-[--mainColor] outline-none"
                 placeholder="(123) 456-7890"
               />
+              {errors.phoneNumber && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.phoneNumber}
+                </p>
+              )}
             </div>
 
             <div>

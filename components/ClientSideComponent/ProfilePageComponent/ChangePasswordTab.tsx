@@ -27,6 +27,10 @@ export default function ChangePasswordTab() {
   // Loading state
   const [loading, setLoading] = useState(false);
 
+  // New state for toggling password visibility
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   // Use consistent styling for inputs and buttons
   const inputClasses =
     "w-full p-2 border rounded-md text-black focus:ring-1 focus:ring-[--mainColor] outline-none mb-1";
@@ -42,28 +46,29 @@ export default function ChangePasswordTab() {
   };
 
   const userEmail = useSelector((state: RootState) => state.user.email);
+
   // Step 1: Send OTP handler
   const handleSendOtp = async (e: FormEvent) => {
     e.preventDefault();
     clearErrors();
-    
+
     if (!email) {
       setEmailError("Email is required.");
       return;
     }
-    
+
     // Validate email format
     if (!/\S+@\S+\.\S+/.test(email)) {
       setEmailError("Please enter a valid email address.");
       return;
     }
-    
+
     // Compare with email from Redux store
     if (userEmail && email.toLowerCase() !== userEmail.toLowerCase()) {
       setEmailError("Entered email does not match your registered email.");
       return;
     }
-    
+
     setLoading(true);
     try {
       const res = await sendOtp(email);
@@ -82,18 +87,17 @@ export default function ChangePasswordTab() {
       setLoading(false);
     }
   };
-  
 
   // Step 2: Verify OTP handler
   const handleVerifyOtp = async (e: FormEvent) => {
     e.preventDefault();
     clearErrors();
-  
+
     if (!otp) {
       setOtpError("OTP is required.");
       return;
     }
-    
+
     setLoading(true);
     try {
       const res = await verifyOtp(email, otp);
@@ -222,26 +226,52 @@ export default function ChangePasswordTab() {
         <form onSubmit={handleResetPassword} className="space-y-6">
           <div>
             <label className="block text-sm mb-1">New Password</label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className={inputClasses}
-              placeholder="Enter new password"
-            />
+            <div className="relative">
+              <input
+                type={showNewPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className={`${inputClasses} pr-10`}
+                placeholder="Enter new password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                {showNewPassword ? (
+                  <i className="fas fa-eye-slash"></i>
+                ) : (
+                  <i className="fas fa-eye"></i>
+                )}
+              </button>
+            </div>
             {newPasswordError && (
               <p className="text-red-500 text-xs mt-1">{newPasswordError}</p>
             )}
           </div>
           <div>
             <label className="block text-sm mb-1">Confirm Password</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className={inputClasses}
-              placeholder="Confirm new password"
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={`${inputClasses} pr-10`}
+                placeholder="Confirm new password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                {showConfirmPassword ? (
+                  <i className="fas fa-eye-slash"></i>
+                ) : (
+                  <i className="fas fa-eye"></i>
+                )}
+              </button>
+            </div>
             {confirmPasswordError && (
               <p className="text-red-500 text-xs mt-1">
                 {confirmPasswordError}
