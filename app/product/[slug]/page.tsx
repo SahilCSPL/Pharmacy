@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProductInfoByid, ProductInfo } from "@/api/ShopPageApi";
+import {
+  getCategoryWiseProducts,
+  getProductInfoByid,
+  ProductInfo,
+} from "@/api/ShopPageApi";
 import ProductDetailClient from "@/components/ClientSideComponent/SingleProductPageComponent/ProductDetailClient";
+import RelatedProducts from "@/components/ClientSideComponent/SingleProductPageComponent/RelatedProducts";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
 // Helper: Extract product id from slug (expects slug like "product-name-5")
 const extractProductId = async (
   slugPromise: Promise<string>
@@ -15,6 +22,7 @@ const extractProductId = async (
   const id = Number.parseInt(idString, 10);
   return isNaN(id) ? null : id;
 };
+
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const productId = await extractProductId(Promise.resolve(slug));
@@ -22,5 +30,21 @@ export default async function ProductPage({ params }: Props) {
   if (!product) {
     notFound();
   }
-  return <ProductDetailClient product={product} />;
+
+  // Fetch related products using the product's category ID
+  const relatedProductsData = await getCategoryWiseProducts(
+    product.category_id.toString()
+  );
+  const relatedProducts = relatedProductsData.products;
+
+  return (
+    <>
+      <ProductDetailClient product={product} />
+      <RelatedProducts
+        relatedProducts={relatedProducts}
+        currentProductId={product.id}
+        categoryName={product.category_name}
+      />
+    </>
+  );
 }

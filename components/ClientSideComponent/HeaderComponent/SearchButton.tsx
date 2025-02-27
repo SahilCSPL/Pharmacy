@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaTimes } from "react-icons/fa";
 import useDebounce from "./useDebounce";
 import { searchProducts } from "@/api/ShopPageApi";
 import { Product } from "../ShopPageComponent.tsx/type";
@@ -12,12 +12,10 @@ export default function SearchButton() {
   const debouncedQuery = useDebounce(query, 500);
   const dropdownRef = useRef<HTMLUListElement>(null);
 
-  // Call searchProducts when the debounced query changes
   useEffect(() => {
     if (debouncedQuery.trim() !== "") {
       searchProducts(debouncedQuery)
         .then((data) => {
-          // Assuming your API returns an object with a "products" array.
           setResults(data.products || []);
         })
         .catch((error) => {
@@ -29,13 +27,11 @@ export default function SearchButton() {
     }
   }, [debouncedQuery]);
 
-  // Update the query state as the user types
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
     setActiveIndex(-1);
   };
 
-  // Handle arrow-key navigation and Enter key selection
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
       setActiveIndex((prev) => Math.min(prev + 1, results.length - 1));
@@ -44,24 +40,34 @@ export default function SearchButton() {
     } else if (e.key === "Enter") {
       if (activeIndex >= 0 && results[activeIndex]) {
         console.log("Selected:", results[activeIndex]);
-        // Add any further logic for selection (e.g., routing)
+        // Navigate or perform additional logic here.
         setQuery("");
         setResults([]);
       }
+    } else if (e.key === "Escape") {
+      setQuery("");
+      setResults([]);
+      setActiveIndex(-1);
     }
   };
 
-  // Handle clicking a search result
   const handleResultClick = (index: number) => {
     console.log("Clicked:", results[index]);
-    // Add any further logic for selection (e.g., routing)
+    // Navigate or perform additional logic here.
     setQuery("");
     setResults([]);
   };
 
+  // Clear the search field
+  const clearSearch = () => {
+    setQuery("");
+    setResults([]);
+    setActiveIndex(-1);
+  };
+
   return (
     <div className="relative w-full md:w-auto">
-      <div className="flex bg-gray-100 px-4 py-2 rounded-lg items-center">
+      <div className="flex bg-gray-100 px-4 py-2 rounded-lg items-center relative">
         <FaSearch className="text-[var(--mainColor)]" />
         <input
           type="text"
@@ -71,6 +77,14 @@ export default function SearchButton() {
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
         />
+        {query && (
+          <button
+            onClick={clearSearch}
+            className="absolute right-2 text-gray-500 hover:text-gray-700"
+          >
+            <FaTimes />
+          </button>
+        )}
       </div>
       {results.length > 0 && (
         <ul

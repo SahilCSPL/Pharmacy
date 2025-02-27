@@ -49,7 +49,7 @@ export default function HeaderDesktopNavigation() {
       <nav className="hidden lg:flex space-x-6 relative">
         {[
           { name: "Categories", path: "/shop" },
-          { name: "Shop", path: "/shop" },
+          { name: "Products", path: "/shop" },
           { name: "Health Blog", path: "/blogs" },
           { name: "Contact", path: "/contact" },
         ].map((item) =>
@@ -99,6 +99,7 @@ export default function HeaderDesktopNavigation() {
                                 <Link
                                   href={`/shop/?category=${child.id}`}
                                   className="text-gray-600 hover:text-[--mainColor] text-sm"
+                                  onClick={() => setIsDropdownOpen(false)}
                                 >
                                   - {child.name}
                                 </Link>

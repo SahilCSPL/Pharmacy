@@ -7,7 +7,7 @@ import { Category } from "@/components/ClientSideComponent/ShopPageComponent.tsx
 
 const navItems = [
   { name: "Medicines", path: "/medicines" },
-  { name: "Shop", path: "/shop" },
+  { name: "Products", path: "/shop" },
   { name: "Health Blog", path: "/blog" },
   { name: "Contact", path: "/contact" },
 ];

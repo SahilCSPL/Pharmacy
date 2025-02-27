@@ -14,7 +14,6 @@ import AddressForm from "@/components/ClientSideComponent/ProfilePageComponent/A
 import CartProductsSummary from "@/components/ClientSideComponent/CartComponent/CartSummery";
 import { clearCart } from "@/redux/cartSlice";
 import { useRouter } from "next/navigation";
-import { div } from "framer-motion/client";
 import Lottie from "lottie-react";
 import emptyCart from "@/public/animation/Animation - 1740402945831.json";
 
@@ -30,6 +29,7 @@ const CheckoutPage = () => {
   // For logged-in users: fetched cart and addresses
   const [cartData, setCartData] = useState<CartResponse | null>(null);
   const [addresses, setAddresses] = useState<Address[] | null>(null);
+  const [orderPlaced, setOrderPlaced] = useState(false);
 
   // For guest users: local address forms
   const [shippingAddress, setShippingAddress] = useState({
@@ -62,9 +62,10 @@ const CheckoutPage = () => {
 
   // Local state to show AddressForm modal
   const [showAddressForm, setShowAddressForm] = useState<boolean>(false);
-  const [addressFormType, setAddressFormType] = useState<
-    "delivery" | "billing" | null
-  >(null);
+  const [addressFormType, setAddressFormType] = useState<"delivery" | "billing" | null>(null);
+
+  // State for editing an address
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 
   // For guest users, we assume cart details come from the Redux cart slice
   const localCart = useSelector((state: RootState) => state.cart);
@@ -72,17 +73,27 @@ const CheckoutPage = () => {
   // Derive the cart items array based on whether the user is logged in or not.
   const cartItems = token ? cartData?.products || [] : localCart.cartItems;
 
-  useEffect(() => {
-    if (token) {
-      // Wait until cartData is loaded.
-      if (!cartData) return;
-      if (localCart.cartItems.length === 0) {
-        router.push("/shop");
-      }
+  // Reusable function to fetch addresses from the API
+  const fetchAddresses = async () => {
+    try {
+      const response: CustomerAddressesResponse = await getCustomerAddresses(customer!, token!);
+      setAddresses(response.addresses);
+      // Update the selected addresses if defaults are set:
+      const defaultDelivery = response.addresses.find(
+        (addr) => addr.type.toLowerCase().includes("delivery") && addr.is_selected
+      );
+      const defaultBilling = response.addresses.find(
+        (addr) => addr.type.toLowerCase().includes("billing") && addr.is_selected
+      );
+      if (defaultDelivery) setSelectedDeliveryAddress(defaultDelivery);
+      if (defaultBilling) setSelectedBillingAddress(defaultBilling);
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+      toast.error("Error fetching addresses.");
     }
-  }, [token, cartData, localCart.cartItems, router]);
+  };
 
-  // Fetch cart and addresses if logged in
+  // Fetch cart and addresses if logged in on mount
   useEffect(() => {
     if (token && customer) {
       const fetchCart = async () => {
@@ -94,27 +105,6 @@ const CheckoutPage = () => {
           toast.error("Error fetching cart data.");
         }
       };
-      const fetchAddresses = async () => {
-        try {
-          const response: CustomerAddressesResponse =
-            await getCustomerAddresses(customer, token);
-          setAddresses(response.addresses);
-          // Pre-select default addresses if available:
-          const defaultDelivery = response.addresses.find(
-            (addr) =>
-              addr.type.toLowerCase().includes("delivery") && addr.is_selected
-          );
-          const defaultBilling = response.addresses.find(
-            (addr) =>
-              addr.type.toLowerCase().includes("billing") && addr.is_selected
-          );
-          if (defaultDelivery) setSelectedDeliveryAddress(defaultDelivery);
-          if (defaultBilling) setSelectedBillingAddress(defaultBilling);
-        } catch (error) {
-          console.error("Error fetching addresses:", error);
-          toast.error("Error fetching addresses.");
-        }
-      };
       fetchCart();
       fetchAddresses();
     }
@@ -123,18 +113,11 @@ const CheckoutPage = () => {
   // Calculate cart subtotal
   const subtotal =
     token && cartData
-      ? cartData.products.reduce(
-          (sum, item) => sum + parseFloat(item.price) * item.quantity,
-          0
-        )
-      : localCart.cartItems.reduce(
-          (sum, item) => sum + parseFloat(item.price) * item.quantity,
-          0
-        );
+      ? cartData.products.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0)
+      : localCart.cartItems.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
 
   const deliveryCharges = 110;
   const taxPercentage = 10;
-
   const finalTotal = subtotal + subtotal / taxPercentage + deliveryCharges;
 
   // --- Order Placement Handler ---
@@ -142,8 +125,7 @@ const CheckoutPage = () => {
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
-    const cartItems =
-      token && cartData ? cartData.products : localCart.cartItems;
+    const cartItems = token && cartData ? cartData.products : localCart.cartItems;
     if (!cartItems || cartItems.length === 0) {
       toast.error("Your cart is empty!");
       return;
@@ -194,8 +176,7 @@ const CheckoutPage = () => {
       final_total: finalTotal,
       is_payment_done: paymentMethod === "online" ? true : false,
       payment_transaction_id: paymentMethod === "online" ? "TXN123" : "",
-      payment_type:
-        paymentMethod === "Cash on Delivery" ? "Cash on Delivery" : "Online",
+      payment_type: paymentMethod === "Cash on Delivery" ? "Cash on Delivery" : "Online",
       payment_datetime: new Date().toISOString(),
       billing_address: token
         ? `${selectedBillingAddress?.address}, ${selectedBillingAddress?.locality},${selectedBillingAddress?.city}, ${selectedBillingAddress?.state} ${selectedBillingAddress?.zipcode}, ${selectedBillingAddress?.country}`
@@ -205,10 +186,7 @@ const CheckoutPage = () => {
       delivery_address: token
         ? `${selectedDeliveryAddress?.address}, ${selectedDeliveryAddress?.locality}, ${selectedDeliveryAddress?.city}, ${selectedDeliveryAddress?.state} ${selectedDeliveryAddress?.zipcode}, ${selectedDeliveryAddress?.country}`
         : `${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipcode}, ${shippingAddress.country} - ${shippingAddress.phone}`,
-      products: (token && cartData
-        ? cartData.products
-        : localCart.cartItems
-      ).map((item) => ({
+      products: (token && cartData ? cartData.products : localCart.cartItems).map((item) => ({
         product_id: Number(item.id),
         unit_price: parseFloat(item.price),
         quantity: item.quantity,
@@ -216,17 +194,15 @@ const CheckoutPage = () => {
     };
 
     try {
-      // if (token) {
-        const orderResponse = await placeOrderAPI(orderPayload, token!);
-        toast.success(orderResponse.message);
-        if (orderResponse.message === "Order placed successfully") {
-          dispatch(clearCart());
-          // dispatch(re)
-          router.push(`/thankyou?orderId=${orderResponse.order_id}`);
-        }
-      // } else {
-      //   toast.success("Order placed successfully! (Demo)");
-      // }
+      const orderResponse = await placeOrderAPI(orderPayload, token!);
+      toast.success(orderResponse.message);
+      if (orderResponse.message === "Order placed successfully") {
+        setOrderPlaced(true); // Prevent redirect from useEffect
+        dispatch(clearCart());
+        router.push(`/thankyou?orderId=${orderResponse.order_id}`);
+      } else {
+        toast.success("Order placed successfully! (Demo)");
+      }
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("Error placing order. Please try again.");
@@ -236,6 +212,16 @@ const CheckoutPage = () => {
   const handleShop = async () => {
     router.push("/shop");
   };
+
+  useEffect(() => {
+    if (token && !orderPlaced) {
+      // Wait until cartData is loaded.
+      if (!cartData) return;
+      if (localCart.cartItems.length === 0) {
+        router.push("/shop");
+      }
+    }
+  }, [token, cartData, localCart.cartItems, orderPlaced, router]);
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -257,6 +243,7 @@ const CheckoutPage = () => {
                   <div
                     onClick={() => {
                       setAddressFormType("delivery");
+                      setEditingAddress(null);
                       setShowAddressForm(true);
                     }}
                     className="border-2 border-dashed border-gray-400 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition"
@@ -267,29 +254,33 @@ const CheckoutPage = () => {
                     <span>Add Address</span>
                   </div>
                   {addresses
-                    .filter((addr) =>
-                      addr.type.toLowerCase().includes("delivery")
-                    )
+                    .filter((addr) => addr.type.toLowerCase().includes("delivery"))
                     .map((addr) => (
                       <div
                         key={addr.id}
                         className="border p-4 rounded relative cursor-pointer hover:shadow-lg transition"
                       >
-                        {selectedDeliveryAddress &&
-                          selectedDeliveryAddress.id === addr.id && (
-                            <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
-                              Selected
-                            </span>
-                          )}
+                        {selectedDeliveryAddress && selectedDeliveryAddress.id === addr.id && (
+                          <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
+                            Selected
+                          </span>
+                        )}
                         <p className="font-bold pt-3">{addr.address}</p>
                         <p className="font-bold">{addr.locality}</p>
                         <p>
                           {addr.city}, {addr.state} {addr.zipcode}
                         </p>
                         <p className="pb-3">{addr.country}</p>
-
                         <div className="flex gap-1">
-                          <button className="text-blue-600 text-xs">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAddressFormType("delivery");
+                              setEditingAddress(addr);
+                              setShowAddressForm(true);
+                            }}
+                            className="text-blue-600 text-xs"
+                          >
                             Edit
                           </button>
                           <button
@@ -321,6 +312,7 @@ const CheckoutPage = () => {
                   <div
                     onClick={() => {
                       setAddressFormType("billing");
+                      setEditingAddress(null);
                       setShowAddressForm(true);
                     }}
                     className="border-2 border-dashed border-gray-400 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition"
@@ -331,20 +323,17 @@ const CheckoutPage = () => {
                     <span>Add Address</span>
                   </div>
                   {addresses
-                    .filter((addr) =>
-                      addr.type.toLowerCase().includes("billing")
-                    )
+                    .filter((addr) => addr.type.toLowerCase().includes("billing"))
                     .map((addr) => (
                       <div
                         key={addr.id}
                         className="border p-4 rounded relative cursor-pointer hover:shadow-lg transition"
                       >
-                        {selectedBillingAddress &&
-                          selectedBillingAddress.id === addr.id && (
-                            <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
-                              Selected
-                            </span>
-                          )}
+                        {selectedBillingAddress && selectedBillingAddress.id === addr.id && (
+                          <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
+                            Selected
+                          </span>
+                        )}
                         <p className="font-bold">{addr.address}</p>
                         <p className="font-bold">{addr.locality}</p>
                         <p>
@@ -352,7 +341,15 @@ const CheckoutPage = () => {
                         </p>
                         <p className="pb-3">{addr.country}</p>
                         <div className="flex gap-1">
-                          <button className="text-blue-600 text-xs">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAddressFormType("billing");
+                              setEditingAddress(addr);
+                              setShowAddressForm(true);
+                            }}
+                            className="text-blue-600 text-xs"
+                          >
                             Edit
                           </button>
                           <button
@@ -492,9 +489,7 @@ const CheckoutPage = () => {
                 </label>
                 {!billingSame && (
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold mb-2">
-                      Enter Billing Address
-                    </h3>
+                    <h3 className="text-xl font-semibold mb-2">Enter Billing Address</h3>
                     <input
                       type="text"
                       placeholder="Full Name"
@@ -586,17 +581,13 @@ const CheckoutPage = () => {
 
         {/* Right Section: Cart & Payment Summary */}
         <div className="w-full md:w-1/3 space-y-6">
-          <div className="border  rounded">
+          <div className="border rounded">
             <h2 className="text-2xl font-bold text-white p-4 bg-[--mainColor]">
               Your Cart
             </h2>
             <div className="cart p-4 max-h-[400px] overflow-y-auto">
               {token && cartData ? (
-                <CartProductsSummary
-                  cartItems={localCart.cartItems}
-                  token={token}
-                  customerId={customer}
-                />
+                <CartProductsSummary cartItems={localCart.cartItems} token={token} customerId={customer} />
               ) : (
                 <CartProductsSummary cartItems={localCart.cartItems} />
               )}
@@ -608,14 +599,12 @@ const CheckoutPage = () => {
                         animationData={emptyCart}
                         loop={true}
                         autoplay={true}
-                        style={{ height: 200, width: 300 }} // Customize the size as needed
+                        style={{ height: 200, width: 300 }}
                       />
                     </div>
                     <p className="py-3">Oops, your cart is empty.</p>
                   </div>
-                ) : (
-                  <></>
-                )}
+                ) : null}
               </div>
               <button
                 onClick={handleShop}
@@ -633,27 +622,19 @@ const CheckoutPage = () => {
               <tbody>
                 <tr className="border-b">
                   <td className="p-2 text-gray-600">Subtotal</td>
-                  <td className="p-2 text-right font-medium text-gray-800">
-                    ₹{subtotal}
-                  </td>
+                  <td className="p-2 text-right font-medium text-gray-800">₹{subtotal}</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-2 text-gray-600">Tax</td>
-                  <td className="p-2 text-right font-medium text-gray-800">
-                    {taxPercentage} %
-                  </td>
+                  <td className="p-2 text-right font-medium text-gray-800">{taxPercentage} %</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-2 text-gray-600">Delivery Charges</td>
-                  <td className="p-2 text-right font-medium text-gray-800">
-                    ₹{deliveryCharges}
-                  </td>
+                  <td className="p-2 text-right font-medium text-gray-800">₹{deliveryCharges}</td>
                 </tr>
                 <tr className="border-t font-semibold text-gray-900">
                   <td className="py-3 px-2 text-[--mainColor]">Total</td>
-                  <td className="py-3 px-2 text-right text-lg">
-                    ₹{finalTotal}
-                  </td>
+                  <td className="py-3 px-2 text-right text-lg">₹{finalTotal}</td>
                 </tr>
               </tbody>
             </table>
@@ -674,7 +655,7 @@ const CheckoutPage = () => {
                 />
                 <span className="ml-2">Cash on Delivery</span>
               </label>
-              <label className="flex items-center">
+              {/* <label className="flex items-center">
                 <input
                   type="radio"
                   name="payment"
@@ -682,8 +663,8 @@ const CheckoutPage = () => {
                   checked={paymentMethod === "online"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
-                <span className="ml-2">Online </span>
-              </label>
+                <span className="ml-2">Online</span>
+              </label> */}
             </div>
           </div>
           <div>
@@ -701,16 +682,20 @@ const CheckoutPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
             <AddressForm
-              addressType={
-                addressFormType === "delivery"
-                  ? "Delivery address"
-                  : "Billing address"
-              }
+              addressType={addressFormType === "delivery" ? "Delivery address" : "Billing address"}
               customerId={customer || 0}
               createdBy={customer || 0}
               authToken={token || ""}
-              onAddressAdded={() => setShowAddressForm(false)}
-              onClose={() => setShowAddressForm(false)}
+              onAddressAdded={() => {
+                setShowAddressForm(false);
+                setEditingAddress(null);
+                fetchAddresses(); // Refresh addresses immediately after update
+              }}
+              onClose={() => {
+                setShowAddressForm(false);
+                setEditingAddress(null);
+              }}
+              editingAddress={editingAddress}
             />
           </div>
         </div>
