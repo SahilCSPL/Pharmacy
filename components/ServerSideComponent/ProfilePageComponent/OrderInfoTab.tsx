@@ -64,20 +64,20 @@ export default function OrderInfoTab() {
       ) : (
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="py-3 px-4 border-b border-gray-200 text-left text-gray-600">
+            <tr className="bg-[--mainColor]">
+              <th className="py-3 px-4 border-b border-gray-200 text-left text-white">
                 Order ID
               </th>
-              <th className="hidden md:table-cell py-3 px-4 border-b border-gray-200 text-left text-gray-600">
+              <th className="hidden md:table-cell py-3 px-4 border-b border-gray-200 text-left text-white">
                 Status
               </th>
-              <th className="hidden md:table-cell py-3 px-4 border-b border-gray-200 text-left text-gray-600">
+              <th className="hidden md:table-cell py-3 px-4 border-b border-gray-200 text-left text-white">
                 Final Total
               </th>
-              <th className="hidden md:table-cell py-3 px-4 border-b border-gray-200 text-left text-gray-600">
+              <th className="hidden md:table-cell py-3 px-4 border-b border-gray-200 text-left text-white">
                 Payment Type
               </th>
-              <th className="py-3 px-4 border-b border-gray-200 text-left text-gray-600">
+              <th className="py-3 px-4 border-b border-gray-200 text-left text-white">
                 Actions
               </th>
             </tr>
@@ -101,7 +101,7 @@ export default function OrderInfoTab() {
                   </td>
                   <td className="py-3 px-4 border-b border-gray-200">
                     <button
-                      className="text-blue-600 hover:underline"
+                      className="text-[--mainColor] hover:underline"
                       onClick={() => toggleOrderDetails(order.id)}
                     >
                       {expandedOrderIds.includes(order.id)
@@ -114,20 +114,20 @@ export default function OrderInfoTab() {
                   <tr>
                     <td className="p-4 bg-gray-50" colSpan={5}>
                       <div className="space-y-4 p-4 bg-white rounded-md shadow-md border transition-all duration-300 ease-in-out">
-                        <div className="flex flex-col md:flex-row md:justify-between gap-4">
-                          <div>
-                            <p>
-                              <strong>Billing Address:</strong>{" "}
+                        <div className="flex flex-col md:flex-row gap-4">
+                          <div className="w-full md:w-2/3">
+                            <p className="pb-3">
+                              <strong>Billing Address:<br/></strong>{" "}
                               {order.customer_info?.billing_address || "N/A"}
                             </p>
-                            <p>
-                              <strong>Delivery Address:</strong>{" "}
+                            <p className="pb-3">
+                              <strong>Delivery Address:<br/></strong>{" "}
                               {order.customer_info?.delivery_address || "N/A"}
                             </p>
                           </div>
-                          <div>
-                            <p>
-                              <strong>Payment Method:</strong>{" "}
+                          <div className="w-full md:w-1/3">
+                            <p className="pb-3">
+                              <strong>Payment Method:<br/></strong>{" "}
                               {order.payment_info?.payment_type || "N/A"}
                             </p>
                           </div>
@@ -156,13 +156,13 @@ export default function OrderInfoTab() {
                                   {order.items.map((item: any) => (
                                     <tr key={item.id} className="border-b">
                                       <td className="py-2 px-3">{item.name}</td>
-                                      <td className="py-2 px-3">
+                                      <td className="py-2 px-3 text-center">
                                         {new Intl.NumberFormat("en-IN", {
                                           style: "currency",
                                           currency: "INR",
                                         }).format(item.unit_price)}
                                       </td>
-                                      <td className="py-2 px-3">{item.quantity}</td>
+                                      <td className="py-2 px-3 text-center">{item.quantity}</td>
                                     </tr>
                                   ))}
                                 </tbody>
