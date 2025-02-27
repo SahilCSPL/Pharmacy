@@ -3,11 +3,9 @@ import Image from "next/image";
 import { getAllBlogs, Blog } from "@/api/blogPageApi";
 import BlogCard from "@/components/ServerSideComponent/HomePageComponent/BlogCard";
 
-interface PageProps {
-  params: {
-    slug: string;
-  };
-}
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
 
 export async function generateStaticParams() {
   const response = await getAllBlogs();
@@ -17,16 +15,18 @@ export async function generateStaticParams() {
 }
 
 export default async function SingleBlogPage({ params }: PageProps) {
-  // Fetch all blogs (using getAllBlogs since there's no dedicated single blog API)
+  const { slug } = await params; // Extract slug as in your ProductPage example
+
+  // Fetch all blogs (since there's no dedicated single blog API)
   const response = await getAllBlogs();
-  const blog = response.results.find((b: Blog) => b.slug === params.slug);
+  const blog = response.results.find((b: Blog) => b.slug === slug);
 
   if (!blog) {
     notFound();
   }
 
   // Filter out the current blog from the list of other blogs
-  const otherBlogs = response.results.filter((b: Blog) => b.slug !== params.slug);
+  const otherBlogs = response.results.filter((b: Blog) => b.slug !== slug);
 
   // Format the date (assuming "Thursday, 27 February 2025, 10:20AM")
   const formattedDate =
