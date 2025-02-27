@@ -6,6 +6,7 @@ type ServiceLink = {
 };
 
 const serviceLinks: ServiceLink[] = [
+  { label: "Login", href: "/user-login" },
   { label: "My Profile", href: "/profile/?tab=accountInfo" },
   { label: "My Addresses", href: "/profile/?tab=manageAddress" },
   { label: "Wishlist", href: "/profile/?tab=wishlistInfo" },

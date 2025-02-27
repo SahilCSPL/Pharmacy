@@ -105,11 +105,11 @@ const ShopPage = () => {
     // Sort products
     if (filters.sort === "price-low-high") {
       filtered = [...filtered].sort(
-        (a, b) => a.selling_price - b.selling_price
+        (a, b) => a.base_price - b.base_price
       );
     } else if (filters.sort === "price-high-low") {
       filtered = [...filtered].sort(
-        (a, b) => b.selling_price - a.selling_price
+        (a, b) => b.base_price - a.base_price
       );
     }
 
@@ -234,7 +234,7 @@ const ShopPage = () => {
             <div className="md:mt-4 flex items-center justify-end md:mb-3 w-1/2">
               <label className="block font-semibold mx-4">Sort by:</label>
               <select
-                className="border rounded p-2 w-[100px] mt-1"
+                className="border rounded p-2 w-[180px] mt-1"
                 value={filters.sort}
                 onChange={handleSortChange}
               >

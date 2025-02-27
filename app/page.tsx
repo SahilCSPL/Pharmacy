@@ -13,7 +13,7 @@ export default function Home() {
       <HomeBanner />
       <CategorySlider />
       <ProductSection
-        category_id={"52"}
+        category_id={"84"}
         title="Glow with the Best Skincare!"
         bgImage="/background/skin-care-background-banner.jpg"
         contentPosition="end"

@@ -1,24 +1,13 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useState } from "react";
-import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
+import { useRef, useState } from "react";
+import { Navigation } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/autoplay";
+import "swiper/css/navigation";
 import ProductCard from "../../ServerSideComponent/HomePageComponent/ProductCard";
 import { Product } from "../ShopPageComponent.tsx/type";
-
-// type Product = {
-//   id: number;
-//   name: string;
-//   images: string[];
-//   category_name: string;
-//   base_price: number;
-//   selling_price: number;
-//   base_and_selling_price_difference_in_percent: number;
-//   stock: number;
-//   tags: string[];
-// };
+import { NavigationOptions } from "swiper/types";
 
 type ProductSliderProps = {
   products: Product[];
@@ -29,6 +18,9 @@ export default function ProductSlider({ products, title }: ProductSliderProps) {
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
 
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
+
   return (
     <div>
       <div className="flex justify-between items-center mx-3">
@@ -37,8 +29,9 @@ export default function ProductSlider({ products, title }: ProductSliderProps) {
         </h2>
         <div className="flex space-x-3 mb-2">
           <button
+            ref={prevRef}
             disabled={isBeginning}
-            className={`swiper-button-prev-custom bg-white py-1 lg:py-2 px-2 lg:px-4 shadow-md hover:bg-gray-200 transition ${
+            className={`bg-white py-1 lg:py-2 px-2 lg:px-4 shadow-md hover:bg-gray-200 transition ${
               isBeginning ? "opacity-50 cursor-not-allowed bg-gray-200" : ""
             }`}
             aria-label="Previous Slide"
@@ -46,8 +39,9 @@ export default function ProductSlider({ products, title }: ProductSliderProps) {
             <i className="fa-solid fa-chevron-left text-gray-700"></i>
           </button>
           <button
+            ref={nextRef}
             disabled={isEnd}
-            className={`swiper-button-next-custom bg-white py-1 lg:py-2 px-2 lg:px-4 shadow-md hover:bg-gray-200 transition ${
+            className={`bg-white py-1 lg:py-2 px-2 lg:px-4 shadow-md hover:bg-gray-200 transition ${
               isEnd ? "opacity-50 cursor-not-allowed bg-gray-200" : ""
             }`}
             aria-label="Next Slide"
@@ -58,16 +52,28 @@ export default function ProductSlider({ products, title }: ProductSliderProps) {
       </div>
       <Swiper
         slidesPerView={4}
-        navigation={{
-          nextEl: ".swiper-button-next-custom",
-          prevEl: ".swiper-button-prev-custom",
-        }}
         modules={[Navigation]}
         breakpoints={{
           320: { slidesPerView: 2 },
           768: { slidesPerView: 3 },
           1024: { slidesPerView: 3 },
           1320: { slidesPerView: 4 },
+        }}
+        navigation={{
+          prevEl: prevRef.current,
+          nextEl: nextRef.current,
+        }}
+        onBeforeInit={(swiper) => {
+          // Ensure the refs are available before assigning
+          if (
+            prevRef.current &&
+            nextRef.current &&
+            swiper.params.navigation &&
+            typeof swiper.params.navigation !== "boolean"
+          ) {
+            (swiper.params.navigation as NavigationOptions).prevEl = prevRef.current;
+            (swiper.params.navigation as NavigationOptions).nextEl = nextRef.current;
+          }
         }}
         onSlideChange={(swiper) => {
           setIsBeginning(swiper.isBeginning);

@@ -50,7 +50,7 @@ export default function HeaderDesktopNavigation() {
         {[
           { name: "Categories", path: "/shop" },
           { name: "Shop", path: "/shop" },
-          { name: "Health Blog", path: "/blog" },
+          { name: "Health Blog", path: "/blogs" },
           { name: "Contact", path: "/contact" },
         ].map((item) =>
           item.name === "Categories" ? (

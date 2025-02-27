@@ -6,11 +6,11 @@ type CustomerCareLink = {
 };
 
 const customerCareLinks: CustomerCareLink[] = [
-  { label: "Login", href: "/user-login" },
+  { label: "Health Blogs", href: "/blogs"},
   { label: "FAQ", href: "/faq" },
   { label: "Contact Us", href: "/contact_us"},
-  { label: "Terms & Condition", href: "/terms_and_conditon" },
-  { label: "Privacy Policy", href: "/privacy_policy" },
+  { label: "Terms & Condition", href: "/" },
+  { label: "Privacy Policy", href: "/" },
 ] as CustomerCareLink[];
 
 const FooterCustomerCare = () => {
@@ -20,13 +20,13 @@ const FooterCustomerCare = () => {
         Quick Links
       </h4>
       <ul className="text-sm">
-        {customerCareLinks.map(({ label, href }) => (
-          <li key={href} className="mb-[15px]">
+        {customerCareLinks.map((links, index) => (
+          <li key={index} className="mb-[15px]">
             <Link
-              href={href}
+              href={links.href}
               className="text-[--textColor] hover:text-[--mainColor] text-[16px]"
             >
-              {label}
+              {links.label}
             </Link>
           </li>
         ))}
