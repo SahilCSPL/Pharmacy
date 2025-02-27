@@ -7,13 +7,15 @@ import {
   getAllOrderDetails,
   OrderDetail,
   OrderDetailsResponse,
-} from "@/api/orderApi"; // Import types if necessary
+} from "@/api/orderApi";
 
 export default function OrderInfoTab() {
   const user = useSelector((state: RootState) => state.user);
   const [orders, setOrders] = useState<OrderDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Track expanded orders by their string IDs
+  const [expandedOrderIds, setExpandedOrderIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (user.token && user.id) {
@@ -32,12 +34,24 @@ export default function OrderInfoTab() {
     }
   }, [user.token, user.id]);
 
+  const toggleOrderDetails = (orderId: string) => {
+    setExpandedOrderIds((prev) =>
+      prev.includes(orderId)
+        ? prev.filter((id) => id !== orderId)
+        : [...prev, orderId]
+    );
+  };
+
   if (loading) {
-    return <div className="text-center py-8 text-gray-600">Loading orders...</div>;
+    return (
+      <div className="text-center py-8 text-gray-600">Loading orders...</div>
+    );
   }
 
   if (error) {
-    return <div className="text-center py-8 text-red-600">{error}</div>;
+    return (
+      <div className="text-center py-8 text-red-600">{error}</div>
+    );
   }
 
   return (
@@ -54,46 +68,113 @@ export default function OrderInfoTab() {
               <th className="py-3 px-4 border-b border-gray-200 text-left text-gray-600">
                 Order ID
               </th>
-              <th className="py-3 px-4 border-b border-gray-200 text-left text-gray-600">
+              <th className="hidden md:table-cell py-3 px-4 border-b border-gray-200 text-left text-gray-600">
                 Status
               </th>
-              <th className="py-3 px-4 border-b border-gray-200 text-left text-gray-600">
-                Items
-              </th>
-              <th className="py-3 px-4 border-b border-gray-200 text-left text-gray-600">
+              <th className="hidden md:table-cell py-3 px-4 border-b border-gray-200 text-left text-gray-600">
                 Final Total
               </th>
-              <th className="py-3 px-4 border-b border-gray-200 text-left text-gray-600">
-                Date
+              <th className="hidden md:table-cell py-3 px-4 border-b border-gray-200 text-left text-gray-600">
+                Payment Type
               </th>
               <th className="py-3 px-4 border-b border-gray-200 text-left text-gray-600">
-                Payment Type
+                Actions
               </th>
             </tr>
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50">
-                <td className="py-3 px-4 border-b border-gray-200">{order.id}</td>
-                <td className="py-3 px-4 border-b border-gray-200">
-                  {order.order_info.order_status}
-                </td>
-                <td className="py-3 px-4 border-b border-gray-200">
-                  {order.purchased_item_count}
-                </td>
-                <td className="py-3 px-4 border-b border-gray-200">
-                  {new Intl.NumberFormat("en-IN", {
-                    style: "currency",
-                    currency: "INR",
-                  }).format(order.order_info.final_total)}
-                </td>
-                <td className="py-3 px-4 border-b border-gray-200">
-                  {order.order_info.created_at_formatted}
-                </td>
-                <td className="py-3 px-4 border-b border-gray-200">
-                  {order.payment_info.payment_type}
-                </td>
-              </tr>
+              <React.Fragment key={order.id}>
+                <tr className="hover:bg-gray-50">
+                  <td className="py-3 px-4 border-b border-gray-200">{order.id}</td>
+                  <td className="hidden md:table-cell py-3 px-4 border-b border-gray-200">
+                    {order.order_info.order_status}
+                  </td>
+                  <td className="hidden md:table-cell py-3 px-4 border-b border-gray-200">
+                    {new Intl.NumberFormat("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                    }).format(order.order_info.final_total)}
+                  </td>
+                  <td className="hidden md:table-cell py-3 px-4 border-b border-gray-200">
+                    {order.payment_info.payment_type}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-200">
+                    <button
+                      className="text-blue-600 hover:underline"
+                      onClick={() => toggleOrderDetails(order.id)}
+                    >
+                      {expandedOrderIds.includes(order.id)
+                        ? "Hide Details"
+                        : "View Details"}
+                    </button>
+                  </td>
+                </tr>
+                {expandedOrderIds.includes(order.id) && (
+                  <tr>
+                    <td className="p-4 bg-gray-50" colSpan={5}>
+                      <div className="space-y-4 p-4 bg-white rounded-md shadow-md border transition-all duration-300 ease-in-out">
+                        <div className="flex flex-col md:flex-row md:justify-between gap-4">
+                          <div>
+                            <p>
+                              <strong>Billing Address:</strong>{" "}
+                              {order.customer_info?.billing_address || "N/A"}
+                            </p>
+                            <p>
+                              <strong>Delivery Address:</strong>{" "}
+                              {order.customer_info?.delivery_address || "N/A"}
+                            </p>
+                          </div>
+                          <div>
+                            <p>
+                              <strong>Payment Method:</strong>{" "}
+                              {order.payment_info?.payment_type || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+                        {order.items && order.items.length > 0 && (
+                          <div>
+                            <h3 className="text-lg font-semibold mb-2">
+                              Items Purchased
+                            </h3>
+                            <div className="overflow-x-auto">
+                              <table className="min-w-full border border-gray-200">
+                                <thead>
+                                  <tr className="bg-gray-100">
+                                    <th className="py-2 px-3 border-b">
+                                      Product
+                                    </th>
+                                    <th className="py-2 px-3 border-b">
+                                      Unit Price
+                                    </th>
+                                    <th className="py-2 px-3 border-b">
+                                      Quantity
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {order.items.map((item: any) => (
+                                    <tr key={item.id} className="border-b">
+                                      <td className="py-2 px-3">{item.name}</td>
+                                      <td className="py-2 px-3">
+                                        {new Intl.NumberFormat("en-IN", {
+                                          style: "currency",
+                                          currency: "INR",
+                                        }).format(item.unit_price)}
+                                      </td>
+                                      <td className="py-2 px-3">{item.quantity}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
           </tbody>
         </table>

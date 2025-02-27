@@ -189,6 +189,8 @@ body {
 
 .react-tel-input .flag-dropdown {
   background-color: transparent!important;
+  border: 1px solid var(--mainColor) !important;
+  outline: none !important;
 }
 
 .react-tel-input .flag-dropdown:hover {

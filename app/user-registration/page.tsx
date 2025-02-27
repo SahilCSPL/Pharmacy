@@ -46,10 +46,15 @@ const Page = () => {
     control,
     watch,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      country: "India",
+      state: "Maharashtra",
+    },
+  });
 
   // Watch country field so that state dropdown can be updated accordingly.
-  const selectedCountry = watch("country", "");
+  const selectedCountry = watch("country", "India");
 
   const router = useRouter();
   const [otpSent, setOtpSent] = useState(false);
@@ -463,7 +468,7 @@ const Page = () => {
                   </p>
                 )}
               </div>
-              <div className="pb-3">
+              <div className="pb-3 select-address">
                 <Controller
                   control={control}
                   name="state"
