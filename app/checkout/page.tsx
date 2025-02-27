@@ -718,7 +718,7 @@ const CheckoutPage = () => {
           <div>
             <button
               onClick={handlePlaceOrder}
-              className="w-full bg-[--mainColor] text-white p-4 rounded hover:bg-blue-600 transition"
+              className="w-full bg-[--mainColor] border border-[--mainColor] text-white p-4 rounded hover:bg-white hover:text-[--mainColor]  transition"
             >
               Place Order
             </button>
