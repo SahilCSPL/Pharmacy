@@ -171,9 +171,9 @@ export default function ChangePasswordTab() {
         <div className="text-center space-y-4">
           <i className="fas fa-check-circle text-5xl text-green-500"></i>
           <p className="text-xl font-semibold">Password Reset Successful!</p>
-          <button onClick={handleGoBack} className={buttonClasses}>
+          {/* <button onClick={handleGoBack} className={buttonClasses}>
             Go Back
-          </button>
+          </button> */}
         </div>
       )}
 

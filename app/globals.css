@@ -186,6 +186,10 @@ body {
   color: var(--textColor);
 }
 
+.react-tel-input .flag-dropdown {
+  background-color: transparent!important;
+}
+
 
 .country-code .react-tel-input input {
   padding-top: 1rem;

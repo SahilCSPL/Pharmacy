@@ -194,7 +194,7 @@ const CheckoutPage = () => {
     // Build order payload according to your API requirements.
     const orderPayload: OrderData = {
       sub_total: subtotal,
-      tax: taxPercentage,
+      tax: tax,
       delivery_charge: deliveryCharges,
       discount: 0,
       final_total: finalTotal,

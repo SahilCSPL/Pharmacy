@@ -3,11 +3,12 @@
 import { APICore } from "@/api/APICore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 
 const PUBLIC_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -18,6 +19,7 @@ interface MyCountryData {
 interface OtpResponse {
   message?: string;
 }
+
 interface FormData {
   first_name: string;
   last_name: string;
@@ -31,6 +33,8 @@ interface FormData {
   state: string;
   country: string;
   zipcode: string;
+  password: string;
+  confirm_password: string;
 }
 
 const Page = () => {
@@ -39,8 +43,13 @@ const Page = () => {
     handleSubmit,
     getValues,
     setValue,
+    control,
+    watch,
     formState: { errors },
   } = useForm<FormData>();
+
+  // Watch country field so that state dropdown can be updated accordingly.
+  const selectedCountry = watch("country", "");
 
   const router = useRouter();
   const [otpSent, setOtpSent] = useState(false);
@@ -53,7 +62,7 @@ const Page = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Local state for holding the selected country dial code.
-  // Default is set to "+1" for US.
+  // Default is set to "+91".
   const [selectedDialCode, setSelectedDialCode] = useState("+91");
 
   // File change handler for profile picture.
@@ -105,12 +114,10 @@ const Page = () => {
         { email, otp }
       )) as OtpResponse;
 
-      // Check if the response indicates an invalid OTP.
       if (response?.message === "Invalid OTP") {
         throw new Error("Invalid OTP");
       }
 
-      // If no error, mark OTP as verified.
       setIsOtpVerified(true);
       toast.success("OTP Verified!");
     } catch (err) {
@@ -133,7 +140,6 @@ const Page = () => {
     setError("");
 
     try {
-      // Create a new FormData object
       const formData = new FormData();
 
       // Append each field to the FormData object
@@ -152,6 +158,8 @@ const Page = () => {
       formData.append("state", data.state);
       formData.append("country", data.country);
       formData.append("zipcode", data.zipcode);
+      formData.append("password", data.password);
+      formData.append("confirm_password", data.confirm_password);
 
       // Append the file if selected
       if (selectedFile) {
@@ -163,7 +171,6 @@ const Page = () => {
         {
           method: "POST",
           body: formData,
-          // Do NOT set Content-Type header; the browser will set it, including the boundary.
         }
       );
 
@@ -189,11 +196,12 @@ const Page = () => {
           </h2>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6 registration-form"
+            className="space-y-2 registration-form"
           >
+            <p>Personal Information :</p>
             {/* Name Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+              <div className="pb-3">
                 <input
                   type="text"
                   placeholder="First Name"
@@ -208,7 +216,7 @@ const Page = () => {
                   </p>
                 )}
               </div>
-              <div>
+              <div className="pb-3">
                 <input
                   type="text"
                   placeholder="Last Name"
@@ -225,9 +233,19 @@ const Page = () => {
               </div>
             </div>
 
+            {/* Profile Picture */}
+            <div className="pb-3">
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="w-full p-3 border rounded-md text-black"
+              />
+            </div>
+
+            <p>Email Verification and Password :</p>
             {/* Email & OTP */}
             <div className="grid grid-cols-3 gap-4 items-end">
-              <div className="col-span-2">
+              <div className="col-span-2 pb-3">
                 <input
                   type="email"
                   placeholder="Email"
@@ -251,22 +269,24 @@ const Page = () => {
                   </p>
                 )}
               </div>
-              {!isOtpVerified &&
-              <button
-                type="button"
-                onClick={sendOtp}
-                className="bg-green-600 hover:bg-green-700 text-white rounded-md transition duration-200 h-full"
-                disabled={otpLoading}
-              >
-                {otpLoading ? "Processing..." : "Send OTP"}
-              </button>
-              }
+              {!isOtpVerified && (
+                <div className="pb-3 h-full">
+                  <button
+                    type="button"
+                    onClick={sendOtp}
+                    className="bg-green-600 hover:bg-green-700 text-white rounded-md transition duration-200 h-full w-full"
+                    disabled={otpLoading}
+                  >
+                    {otpLoading ? "Processing..." : "Send OTP"}
+                  </button>
+                </div>
+              )}
             </div>
             {otpSendError && (
               <p className="text-red-500 text-sm mt-1">{otpSendError}</p>
             )}
             {otpSent && !isOtpVerified && (
-              <div>
+              <div className="pb-3">
                 <input
                   type="text"
                   placeholder="Enter OTP"
@@ -278,7 +298,6 @@ const Page = () => {
                     {errors.otp.message}
                   </p>
                 )}
-                
                 <button
                   type="button"
                   onClick={verifyOtp}
@@ -293,7 +312,50 @@ const Page = () => {
               </div>
             )}
 
-            <div className="flex gap-2 items-start ">
+            {/* Password Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="pb-3">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                  className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+              <div className="pb-3">
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  {...register("confirm_password", {
+                    required: "Confirm Password is required",
+                    validate: (value) =>
+                      value === getValues("password") ||
+                      "Passwords do not match",
+                  })}
+                  className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
+                />
+                {errors.confirm_password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.confirm_password.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <p>Phone Number:</p>
+            {/* Phone Number */}
+            <div className="flex gap-2 items-start pb-3">
               <div className="w-4/12 md:w-2/12 country-code">
                 <PhoneInput
                   country={"us"}
@@ -304,15 +366,13 @@ const Page = () => {
                     setSelectedDialCode(dialWithPlus);
                     setValue("country_code_for_phone_number", dialWithPlus);
                   }}
-                  inputProps={{
-                    readOnly: true,
-                  }}
+                  inputProps={{ readOnly: true }}
                   containerStyle={{ width: "100%" }}
                   inputStyle={{ width: "100%" }}
                   buttonStyle={{ border: "none" }}
                 />
               </div>
-              <div className="w-8/12 md:w-10/12">
+              <div className="w-8/12 md:w-10/12 pb-3">
                 <input
                   id="phone_number"
                   type="text"
@@ -335,17 +395,9 @@ const Page = () => {
               </div>
             </div>
 
-            {/* Profile Picture */}
-            <div>
-              <input
-                type="file"
-                onChange={handleFileChange}
-                className="w-full p-3 border rounded-md text-black"
-              />
-            </div>
-
+            <p>Address Information:</p>
             {/* Address Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <input
                   type="text"
@@ -361,7 +413,7 @@ const Page = () => {
                   </p>
                 )}
               </div>
-              <div>
+              <div className="pb-3">
                 <input
                   type="text"
                   placeholder="Area"
@@ -374,10 +426,7 @@ const Page = () => {
                   </p>
                 )}
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div>
+              <div className="pb-3">
                 <input
                   type="text"
                   placeholder="City"
@@ -390,20 +439,10 @@ const Page = () => {
                   </p>
                 )}
               </div>
-              <div>
-                <input
-                  type="text"
-                  placeholder="State"
-                  {...register("state", { required: "State is required" })}
-                  className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
-                />
-                {errors.state && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.state.message}
-                  </p>
-                )}
-              </div>
-              <div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="pb-3">
                 <input
                   type="text"
                   placeholder="Pincode"
@@ -416,20 +455,49 @@ const Page = () => {
                   </p>
                 )}
               </div>
-            </div>
+              <div className="pb-3">
+                <Controller
+                  control={control}
+                  name="state"
+                  rules={{ required: "State is required" }}
+                  render={({ field }) => (
+                    <RegionDropdown
+                      country={selectedCountry}
+                      value={field.value}
+                      onChange={field.onChange}
+                      className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
+                      defaultOptionLabel="Select State"
+                    />
+                  )}
+                />
+                {errors.state && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.state.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <input
-                type="text"
-                placeholder="Country"
-                {...register("country", { required: "Country is required" })}
-                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
-              />
-              {errors.country && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.country.message}
-                </p>
-              )}
+              {/* Country Dropdown */}
+              <div className="pb-3">
+                <Controller
+                  control={control}
+                  name="country"
+                  rules={{ required: "Country is required" }}
+                  render={({ field }) => (
+                    <CountryDropdown
+                      value={field.value}
+                      onChange={field.onChange}
+                      className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 text-black"
+                      defaultOptionLabel="Select Country"
+                    />
+                  )}
+                />
+                {errors.country && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.country.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Register Button */}
@@ -446,7 +514,6 @@ const Page = () => {
           </form>
         </div>
       </div>
-
       <ToastContainer />
     </main>
   );
