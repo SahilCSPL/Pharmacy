@@ -143,10 +143,10 @@ const Page = () => {
     }
     setRegisterLoading(true);
     setError("");
-
+  
     try {
       const formData = new FormData();
-
+  
       // Append each field to the FormData object
       formData.append("first_name", data.first_name);
       formData.append("last_name", data.last_name);
@@ -165,12 +165,12 @@ const Page = () => {
       formData.append("zipcode", data.zipcode);
       formData.append("password", data.password);
       formData.append("confirm_password", data.confirm_password);
-
+  
       // Append the file if selected
       if (selectedFile) {
         formData.append("profile_picture", selectedFile);
       }
-
+  
       const response = await fetch(
         `${PUBLIC_URL}/user/customer-registration/`,
         {
@@ -178,19 +178,26 @@ const Page = () => {
           body: formData,
         }
       );
-
+  
+      const responseData = await response.json();
+  
       if (!response.ok) {
-        throw new Error("Registration failed");
+        // Display the message received from the backend in the error
+        toast.error(responseData.message);
+        return;
       }
-
-      toast.success("Registration successful!");
+  
+      toast.success(responseData.message);
       router.push("/user-login");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Registration failed");
+      toast.error(
+        err instanceof Error ? err.message : "Registration failed"
+      );
     } finally {
       setRegisterLoading(false);
     }
   };
+  
 
   return (
     <main className="bg-[--mainColor] py-10">
