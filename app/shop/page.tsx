@@ -222,7 +222,7 @@ const ShopPage = () => {
         {/* Product Grid */}
         <div className="w-full md:w-2/3 lg:w-3/4 xl:w-4/5 md:pl-4">
           {/* Sort Dropdown */}
-          <div className="flex jsutify-between md:justify-end items-center pb-4">
+          <div className="flex jsutify-between md:justify-end items-end md:items-center pb-4">
             <div className="block md:hidden w-1/2">
               <button
                 onClick={() => setMobileFilterOpen(true)}
@@ -231,10 +231,10 @@ const ShopPage = () => {
                 Filter
               </button>
             </div>
-            <div className="md:mt-4 flex items-center justify-end md:mb-3 w-1/2">
-              <label className="block font-semibold mx-4">Sort by:</label>
+            <div className="md:mt-4 flex flex-col md:flex-row items-center  justify-end md:mb-3 w-1/2">
+              <label className="block font-semibold mx-2 md:mx-4 text-sm md:text-base">Sort by:</label>
               <select
-                className="border rounded p-2 w-[180px] mt-1"
+                className="border rounded p-2 w-[120px] md:w-[180px] mt-1"
                 value={filters.sort}
                 onChange={handleSortChange}
               >

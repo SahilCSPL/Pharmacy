@@ -32,6 +32,7 @@ export default function OffCanvasCart({
   }, [isOpen]);
 
   const handleShop = async () => {
+    toggleCart();
     router.push("/shop");
   };
 

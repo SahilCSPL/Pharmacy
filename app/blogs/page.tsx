@@ -81,7 +81,7 @@ const BlogPage = () => {
         </nav> */}
       </div>
       <div className="container mx-auto pt-10">
-      <h3 className="text-3xl font-bold text-black">Look What's Trending!</h3>
+      <h3 className="text-3xl font-bold text-black px-3">Look What's Trending!</h3>
       </div>
       
       {/* Blog Grid Section */}

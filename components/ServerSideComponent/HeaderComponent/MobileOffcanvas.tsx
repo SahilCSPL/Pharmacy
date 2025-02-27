@@ -7,16 +7,22 @@ import { FaTimes } from "react-icons/fa";
 import MobileNavigation from "./MobileNavigation";
 import UserButton from "@/components/ClientSideComponent/HeaderComponent/UserButton";
 import CartOverlay from "@/components/ClientSideComponent/CartComponent/CartOverly";
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 type MobileOffcanvasProps = {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 };
 
-export default function MobileOffcanvas({
-  isOpen,
-  setIsOpen,
-}: MobileOffcanvasProps) {
+export default function MobileOffcanvas({ isOpen, setIsOpen }: MobileOffcanvasProps) {
+  const pathname = usePathname();
+
+  // Close offcanvas on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname, setIsOpen]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -37,10 +43,10 @@ export default function MobileOffcanvas({
           </div>
           <div className="flex space-x-1 py-4 border-b items-center">
             <UserButton />
-            <div className="lg:hidden">
-              <WishlistButton />
+            <div className="lg:hidden" onClick={() => setIsOpen(false)}>
+              <WishlistButton/>
             </div>
-            <div className="lg:hidden">
+            <div className="lg:hidden" onClick={() => setIsOpen(false)}>
               <CartOverlay />
             </div>
           </div>

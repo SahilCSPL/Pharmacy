@@ -8,6 +8,7 @@ import { getOrderDetails, OrderDetailsResponse } from "@/api/orderApi";
 import orderPlaced from "@/public/animation/Animation - 1740397607990.json";
 import Lottie from "lottie-react";
 import Image from "next/image";
+
 const ThankYouPage = () => {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
@@ -65,13 +66,13 @@ const ThankYouPage = () => {
   }
 
   return (
-    <div className="container flex flex-col justify-center mx-auto p-5 max-w-6xl">
-      <div className="animation-container mx-auto">
+    <div className="container mx-auto p-5 max-w-6xl space-y-6">
+      <div className="animation-container flex justify-center">
         <Lottie
           animationData={orderPlaced}
           loop={false}
           autoplay={true}
-          style={{ height: 200, width: 300 }} // Customize the size as needed
+          style={{ height: 200, width: 300 }}
         />
       </div>
       <h1 className="text-3xl font-bold text-center mb-4">
@@ -82,129 +83,132 @@ const ThankYouPage = () => {
         <strong>{orderDetails.customer_info.email}</strong> with your complete order details.
       </p>
 
-      <div className="border px-4 py-3">
-        <div className="border-b p-4 rounded flex justify-between">
-          <h3 className="text-xl font-semibold">
+      {/* Order Details Section */}
+      <div className="border px-4 py-3 space-y-4">
+        {/* Order Info Header */}
+        <div className="border-b p-3 md:p-4 rounded flex flex-col md:flex-row justify-between">
+          <h3 className="text-base md:text-xl font-semibold mb-2 md:mb-0">
             Order Number: {orderDetails.id}
           </h3>
-          <span className="text-xl font-semibold mb-2">
+          <span className="hidden md:block text-base md:text-xl font-semibold">
             <strong>Total:</strong> ₹{orderDetails.order_info.final_total}
           </span>
         </div>
 
-        <div className="p-4 flex justify-between">
+        {/* Addresses & Payment Details */}
+        <div className="p-4 flex flex-col md:flex-row justify-between gap-4">
           <div className="order-details">
             <div className="mb-4">
-              <div className="billing-adress">
+              <div className="billing-address mb-2">
                 <p>
-                  <strong>Billing Address:</strong>{" "}
+                  <strong>Billing Address:</strong>
                 </p>
                 <p>{orderDetails.customer_info.billing_address}</p>
               </div>
-              <div className="billing-adress">
+              <div className="delivery-address">
                 <p>
-                  <strong>Delivery Address:</strong>{" "}
+                  <strong>Delivery Address:</strong>
                 </p>
                 <p>{orderDetails.customer_info.delivery_address}</p>
               </div>
             </div>
             <div className="payment">
               <p>
-                <strong>Payment Method:</strong>{" "}
-                {orderDetails.payment_info.payment_type}
+                <strong>Payment Method:</strong> {orderDetails.payment_info.payment_type}
               </p>
             </div>
           </div>
-          <div className="price-details items-end">
-            <table className="min-w-full border border-gray-200">
-              <tbody>
-                <tr className="border-b">
-                  <td className="border px-2 py-1 font-semibold">Subtotal:</td>
-                  <td className="border px-2 py-1 text-end">
-                  ₹{orderDetails.order_info.sub_total}
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="border px-2 py-2 font-semibold">Tax:</td>
-                  <td className="border px-2 py-2 text-end">
-                    {orderDetails.order_info.tax}%
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="border px-2 py-2 font-semibold">
-                    Delivery Charge:
-                  </td>
-                  <td className="border px-2 py-2 text-end">
-                  ₹{orderDetails.order_info.delivery_charge}
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="border px-2 py-2 font-semibold">Discount:</td>
-                  <td className="border px-2 py-2 text-end">
-                    {orderDetails.order_info.discount}
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="border px-2 py-2 font-semibold">Total:</td>
-                  <td className="border px-2 py-2 text-end">
-                  ₹{orderDetails.order_info.final_total}
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="border px-2 py-2 font-semibold">Status:</td>
-                  <td className="border px-2 py-2 text-end">
-                    {orderDetails.order_info.order_status}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border px-2 py-2 font-semibold">
-                    Order Date:
-                  </td>
-                  <td className="border px-2 py-2 text-end">
-                    {orderDetails.order_info.created_at_formatted}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="price-details md:items-end">
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-gray-200">
+                <tbody>
+                  <tr className="border-b">
+                    <td className="border px-2 py-1 font-semibold">Subtotal:</td>
+                    <td className="border px-2 py-1 text-end">
+                      ₹{orderDetails.order_info.sub_total}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="border px-2 py-2 font-semibold">Tax:</td>
+                    <td className="border px-2 py-2 text-end">
+                      {orderDetails.order_info.tax}%
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="border px-2 py-2 font-semibold">Delivery Charge:</td>
+                    <td className="border px-2 py-2 text-end">
+                      ₹{orderDetails.order_info.delivery_charge}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="border px-2 py-2 font-semibold">Discount:</td>
+                    <td className="border px-2 py-2 text-end">
+                      {orderDetails.order_info.discount}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="border px-2 py-2 font-semibold">Total:</td>
+                    <td className="border px-2 py-2 text-end">
+                      ₹{orderDetails.order_info.final_total}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="border px-2 py-2 font-semibold">Status:</td>
+                    <td className="border px-2 py-2 text-end">
+                      {orderDetails.order_info.order_status}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border px-2 py-2 font-semibold">Order Date:</td>
+                    <td className="border px-2 py-2 text-end">
+                      {orderDetails.order_info.created_at_formatted}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+
+        {/* Items Purchased */}
         <div className="p-4">
           <h3 className="text-xl font-semibold mb-2 text-[--mainColor]">
             Items Purchased
           </h3>
-          <table className="min-w-full border border-gray-200">
-            <thead>
-              <tr>
-                <th className="border px-4 py-2">Product</th>
-                <th className="border px-4 py-2">Unit Price</th>
-                <th className="border px-4 py-2">Quantity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderDetails.items.map((item: any) => (
-                <tr key={item.id} className="border-b">
-                  <td className="border px-4 py-2">
-                    <div className="flex items-center">
-                      <div className="w-[100px]">
-                        <Image
-                          src={`${process.env.NEXT_PUBLIC_API_URL}${item.image}`}
-                          alt={item.name}
-                          width={100}
-                          height={100}
-                        />
-                      </div>
-
-                      <p>{item.name}</p>
-                    </div>
-                  </td>
-                  <td className="border px-4 py-2 text-end">
-                  ₹{item.unit_price}
-                  </td>
-                  <td className="border px-4 py-2 text-end">{item.quantity}</td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="border px-4 py-2">Product</th>
+                  <th className="border px-4 py-2">Unit Price</th>
+                  <th className="border px-4 py-2">Quantity</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {orderDetails.items.map((item: any) => (
+                  <tr key={item.id} className="border-b">
+                    <td className="border px-4 py-2">
+                      <div className="flex items-center">
+                        <div className="w-[100px]">
+                          <Image
+                            src={`${process.env.NEXT_PUBLIC_API_URL}${item.image}`}
+                            alt={item.name}
+                            width={80}
+                            height={80}
+                          />
+                        </div>
+                        <p className="ml-2">{item.name}</p>
+                      </div>
+                    </td>
+                    <td className="border px-4 py-2 text-end">
+                      ₹{item.unit_price}
+                    </td>
+                    <td className="border px-4 py-2 text-end">{item.quantity}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
