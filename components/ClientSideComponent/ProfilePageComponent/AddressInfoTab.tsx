@@ -148,14 +148,21 @@ export default function AddressInfoTabs() {
           </div>
         </div>
         <div className="p-4">
-          {showAddressForm ? (
+          {(showAddressForm || editingAddress) ? (
             <AddressForm
               addressType={activeTab === "Delivery" ? "Delivery address" : "Billing address"}
               customerId={customer || 0}
               createdBy={customer || 0}
               authToken={token || ""}
-              onAddressAdded={() => setShowAddressForm(false)}
-              onClose={() => setShowAddressForm(false)}
+              onAddressAdded={() => {
+                setShowAddressForm(false)
+                setEditingAddress(null)
+              }}
+              onClose={() => {
+                setShowAddressForm(false)
+                setEditingAddress(null)
+              }}
+              editingAddress={editingAddress}
             />
           ) : sortedActiveAddresses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
