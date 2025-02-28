@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { addOrUpdateCart } from "@/api/cartPageApi";
 import { addToCart } from "@/redux/cartSlice";
-import { ProductInfo } from "@/api/ShopPageApi";
+import { ProductInfo } from "../ShopPageComponent.tsx/type";
 
 interface ProductDetailClientProps {
   product: ProductInfo;
