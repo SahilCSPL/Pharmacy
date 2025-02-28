@@ -9,6 +9,7 @@ import "swiper/css/navigation";
 import { useRouter } from "next/navigation";
 import { Banner, getBanners } from "@/api/homePageApi";
 import { useEffect, useState } from "react";
+import BannerSkeleton from "./BannerSkeleton";
 
 const styling1 = [
   "text-center md:w-1/2",
@@ -25,15 +26,17 @@ const styling4 = ["", "md:block", "md:block"];
 export default function HomeBanner() {
   const router = useRouter();
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchBanners = async () => {
       try {
         const data = await getBanners();
-        // Assuming the API returns { results: Banner[] }
         setBanners(data.results);
       } catch (error) {
         console.error("Error fetching banners:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -43,6 +46,14 @@ export default function HomeBanner() {
   const handleShop = () => {
     router.push("/shop");
   };
+
+  if (isLoading) {
+    return (
+      <div className="relative w-full h-[400px] lg:h-[500px]">
+        <BannerSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-[400px] lg:h-[500px] banner-section">
@@ -70,19 +81,13 @@ export default function HomeBanner() {
                   backgroundImage: `url(${process.env.NEXT_PUBLIC_API_URL}${slide.image})`,
                 }}
               >
-                {/* Overlay */}
                 <div className="absolute inset-0 bg-black bg-opacity-10"></div>
 
-                {/* Content */}
                 <div
-                  className={`flex w-full container max-w-7xl mx-auto pl-4 ${
-                    styling3[index % styling3.length]
-                  }`}
+                  className={`flex w-full container max-w-7xl mx-auto pl-4 ${styling3[index % styling3.length]}`}
                 >
                   <div
-                    className={`relative z-10 w-full ${
-                      styling1[index % styling1.length]
-                    }`}
+                    className={`relative z-10 w-full ${styling1[index % styling1.length]}`}
                   >
                     <p className="text-base lg:text-lg mt-4 text-white">
                       💊 {slide.description}
@@ -91,9 +96,7 @@ export default function HomeBanner() {
                       {slide.heading}
                     </h1>
                     <div
-                      className={`flex justify-center ${
-                        styling4[index % styling4.length]
-                      }`}
+                      className={`flex justify-center ${styling4[index % styling4.length]}`}
                     >
                       <button
                         onClick={handleShop}
@@ -103,9 +106,7 @@ export default function HomeBanner() {
                       </button>
                     </div>
                   </div>
-                  <div
-                    className={`dummy ${styling2[index % styling2.length]}`}
-                  ></div>
+                  <div className={`dummy ${styling2[index % styling2.length]}`}></div>
                 </div>
               </div>
             </SwiperSlide>
