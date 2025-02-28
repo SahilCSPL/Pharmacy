@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import {
   getCategoryWiseProducts,
   getProductInfoByid,
-  ProductInfo,
 } from "@/api/ShopPageApi";
 import ProductDetailClient from "@/components/ClientSideComponent/SingleProductPageComponent/ProductDetailClient";
 import RelatedProducts from "@/components/ClientSideComponent/SingleProductPageComponent/RelatedProducts";
+import { ProductInfo } from "@/components/ClientSideComponent/ShopPageComponent.tsx/type";
 
 type Props = {
   params: Promise<{ slug: string }>;
