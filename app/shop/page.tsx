@@ -10,7 +10,6 @@ export default async function ShopPage() {
 
   return (
     <section className="bg-[#f3f3f3]">
-      {/* Static Banner Section */}
       <div
         className="h-[400px] bg-cover bg-center py-5 lg:py-10 flex justify-center items-center flex-col"
         style={{
