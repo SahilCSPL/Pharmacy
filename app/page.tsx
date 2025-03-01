@@ -25,7 +25,7 @@ export default function Home() {
         <ProductSection
           category_id="84"
           title="Glow with the Best Skincare!"
-          bgImage="/background/skin-care-background-banner.jpg"
+          bgImage="/background/skin-care.webp"
           contentPosition="end"
         />
       </Suspense>
