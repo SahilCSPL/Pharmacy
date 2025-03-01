@@ -48,7 +48,7 @@ export default function HeaderDesktopNavigation() {
     <div className="hidden xl:flex items-center space-x-6 flex-grow justify-center">
       <nav className="hidden lg:flex space-x-6 relative">
         {[
-          { name: "Home", path: "/"},
+          { name: "Home", path: "/" },
           { name: "Categories", path: "/shop" },
           { name: "Products", path: "/shop" },
           { name: "Health Blog", path: "/blogs" },
@@ -69,16 +69,30 @@ export default function HeaderDesktopNavigation() {
                 aria-haspopup="true"
                 className="flex items-center text-[var(--textColor)] hover:text-[var(--mainColor)] p-2 rounded-md "
               >
-                <p className="p-2">
-                  {item.name}
-                </p>
-                <span className="p-2">
-                  <i
-                    className={`fa-solid ${
-                      isDropdownOpen ? "fa-caret-up" : "fa-caret-down"
-                    }`}
-                  ></i>
-                </span>
+                <p className="py-2 pl-2 pr-1">{item.name}</p>
+                  {isDropdownOpen ? (
+                    // Caret Up SVG
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 320 512"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      className="w-4 h-4"
+                    >
+                      <path d="M31.5 320h257c28.4 0 42.7-34.5 22.6-54.6l-128.5-128c-12.5-12.5-32.8-12.5-45.3 0L9 265.4C-10.1 285.5 4.2 320 31.5 320z" />
+                    </svg>
+                  ) : (
+                    // Caret Down SVG
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 320 512"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      className="w-4 h-4"
+                    >
+                      <path d="M288 192H31.5c-28.4 0-42.7 34.5-22.6 54.6l128.5 128c12.5 12.5 32.8 12.5 45.3 0l128.5-128c20.1-20.1 5.8-54.6-22.6-54.6z" />
+                    </svg>
+                  )}
               </button>
               {isDropdownOpen && filteredCategories.length > 0 && (
                 <div
@@ -115,7 +129,10 @@ export default function HeaderDesktopNavigation() {
               )}
             </div>
           ) : (
-            <div key={item.name} className="relative flex items-center justify-center">
+            <div
+              key={item.name}
+              className="relative flex items-center justify-center"
+            >
               <Link
                 key={item.name}
                 href={item.path}

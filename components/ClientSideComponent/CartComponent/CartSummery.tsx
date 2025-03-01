@@ -99,9 +99,9 @@ const CartProductsSummary: React.FC<CartProductsSummaryProps> = ({
                       e.stopPropagation();
                       handleRemoveItem(item.id);
                     }}
-                    className="bg-red-500 text-sm font-bold px-2 py-1 rounded hover:bg-red-700 transition"
+                    className="border border-red-500 text-red-500 px-2 pb-1 rounded hover:bg-red-700 transition"
                   >
-                    <i className="fa-solid fa-xmark text-white"></i>
+                    x
                   </button>
                 </div>
                 <div className="flex justify-between mt-1">
@@ -133,7 +133,7 @@ const CartProductsSummary: React.FC<CartProductsSummaryProps> = ({
                   </div>
                 </div>
                 <p className="text-sm text-gray-600 mt-1">
-                ₹ {unitPrice.toFixed(2)} / Unit
+                  ₹ {unitPrice.toFixed(2)} / Unit
                 </p>
               </div>
             </li>

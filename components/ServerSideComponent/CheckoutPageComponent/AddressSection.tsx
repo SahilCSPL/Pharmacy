@@ -1,15 +1,15 @@
-import type React from "react"
-import type { Address } from "@/redux/userSlice"
-import { toast } from "react-toastify"
+import type React from "react";
+import type { Address } from "@/redux/userSlice";
+import { toast } from "react-toastify";
 
 interface AddressSectionProps {
-  addresses: Address[] | null
-  selectedAddress: Address | null
-  setSelectedAddress: (address: Address) => void
-  setDefaultAddress: (payload: { addressId: number; type: string }) => void
-  addressType: "delivery" | "billing"
-  setShowAddressForm: (show: boolean) => void
-  setAddressFormType: (type: "delivery" | "billing") => void
+  addresses: Address[] | null;
+  selectedAddress: Address | null;
+  setSelectedAddress: (address: Address) => void;
+  setDefaultAddress: (payload: { addressId: number; type: string }) => void;
+  addressType: "delivery" | "billing";
+  setShowAddressForm: (show: boolean) => void;
+  setAddressFormType: (type: "delivery" | "billing") => void;
 }
 
 const AddressSection: React.FC<AddressSectionProps> = ({
@@ -29,22 +29,47 @@ const AddressSection: React.FC<AddressSectionProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div
           onClick={() => {
-            setAddressFormType(addressType)
-            setShowAddressForm(true)
+            setAddressFormType(addressType);
+            setShowAddressForm(true);
           }}
           className="border-2 border-dashed border-gray-400 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition"
         >
           <span className="text-2xl font-bold mb-2">
-            <i className="fas fa-plus"></i>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M8 1V15"
+                stroke="#000"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <path
+                d="M1 8H15"
+                stroke="#000"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
           </span>
           <span>Add Address</span>
         </div>
         {addresses
           ?.filter((addr) => addr.type.toLowerCase().includes(addressType))
           .map((addr) => (
-            <div key={addr.id} className="border p-4 rounded relative cursor-pointer hover:shadow-lg transition">
+            <div
+              key={addr.id}
+              className="border p-4 rounded relative cursor-pointer hover:shadow-lg transition"
+            >
               {selectedAddress && selectedAddress.id === addr.id && (
-                <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">Selected</span>
+                <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">
+                  Selected
+                </span>
               )}
               <p className="font-bold pt-3">{addr.address}</p>
               <p className="font-bold">{addr.locality}</p>
@@ -57,12 +82,12 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                 <button className="text-blue-600 text-xs">Edit</button>
                 <button
                   onClick={() => {
-                    setSelectedAddress(addr)
+                    setSelectedAddress(addr);
                     setDefaultAddress({
                       addressId: addr.id as number,
                       type: addr.type,
-                    })
-                    toast.info(`${addressType} address selected`)
+                    });
+                    toast.info(`${addressType} address selected`);
                   }}
                   className="text-green-600 hover:underline text-xs"
                 >
@@ -73,8 +98,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
           ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AddressSection
-
+export default AddressSection;

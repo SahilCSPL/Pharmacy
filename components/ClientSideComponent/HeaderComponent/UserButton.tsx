@@ -92,7 +92,24 @@ export default function UserButton() {
             className="h-8 w-8 rounded-full object-cover"
           />
         ) : (
-          <i className="fa-regular fa-user text-[var(--mainColor)] group-hover:text-white"></i>
+          <span className="inline-flex items-center justify-center w-7 h-7 bg-[var(--mainColor)] rounded-full group-hover:bg-white transition-colors duration-300">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1.5em"
+              height="1.5em"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="text-white group-hover:text-[var(--mainColor)] transition-colors duration-300"
+            >
+              <circle cx="12" cy="7" r="4" />
+              <path d="M6 21v-2a6 6 0 0 1 6-6 6 6 0 0 1 6 6v2" />
+            </svg>
+          </span>
         )}
         {user.token ? (
           <p className="hover:text-white ml-2">{user.first_name}</p>

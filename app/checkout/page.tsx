@@ -277,7 +277,27 @@ const CheckoutPage = () => {
                     className="border-2 border-dashed border-gray-400 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition"
                   >
                     <span className="text-2xl font-bold mb-2">
-                      <i className="fas fa-plus"></i>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M8 1V15"
+                          stroke="#000"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M1 8H15"
+                          stroke="#000"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
                     </span>
                     <span>Add Address</span>
                   </div>
@@ -349,7 +369,27 @@ const CheckoutPage = () => {
                     className="border-2 border-dashed border-gray-400 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition"
                   >
                     <span className="text-2xl font-bold mb-2">
-                      <i className="fas fa-plus"></i>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M8 1V15"
+                          stroke="#000"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M1 8H15"
+                          stroke="#000"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
                     </span>
                     <span>Add Address</span>
                   </div>
@@ -728,30 +768,29 @@ const CheckoutPage = () => {
       {/* AddressForm Modal */}
       {showAddressForm && addressFormType && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded shadow-lg w-full max-w-md mx-4 overflow-y-auto max-h-full lg:max-h-[90%]">
-          <AddressForm
-            addressType={
-              addressFormType === "delivery"
-                ? "Delivery address"
-                : "Billing address"
-            }
-            customerId={customer || 0}
-            createdBy={customer || 0}
-            authToken={token || ""}
-            onAddressAdded={() => {
-              setShowAddressForm(false);
-              setEditingAddress(null);
-              fetchAddresses(); // Refresh addresses immediately after update
-            }}
-            onClose={() => {
-              setShowAddressForm(false);
-              setEditingAddress(null);
-            }}
-            editingAddress={editingAddress}
-          />
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md mx-4 overflow-y-auto max-h-full lg:max-h-[90%]">
+            <AddressForm
+              addressType={
+                addressFormType === "delivery"
+                  ? "Delivery address"
+                  : "Billing address"
+              }
+              customerId={customer || 0}
+              createdBy={customer || 0}
+              authToken={token || ""}
+              onAddressAdded={() => {
+                setShowAddressForm(false);
+                setEditingAddress(null);
+                fetchAddresses(); // Refresh addresses immediately after update
+              }}
+              onClose={() => {
+                setShowAddressForm(false);
+                setEditingAddress(null);
+              }}
+              editingAddress={editingAddress}
+            />
+          </div>
         </div>
-      </div>
-      
       )}
     </div>
   );

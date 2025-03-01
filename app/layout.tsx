@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const rubik = Rubik({
   subsets: ["latin"],
-  weight: ["300", "400","500", "600", "700"], // Add desired font weights
+  weight: ["300", "400", "500", "600", "700"], // Add desired font weights
 });
 
 export const metadata: Metadata = {
@@ -28,12 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={rubik.className}>
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        />
-      </head>
+      <head></head>
       <body className="antialiased">
         <ReduxStoreProvider>
           <Header />

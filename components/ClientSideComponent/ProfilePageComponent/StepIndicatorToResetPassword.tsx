@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { FaCheck } from "react-icons/fa";
 
 export type Step = "sendOtp" | "verifyOtp" | "resetPassword" | "success";
 
@@ -49,8 +50,8 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => {
             )}`}
           >
             {isStepCompleted("sendOtp") ? (
-              <i className="fas fa-check"></i>
-            ) : (
+              <FaCheck />
+              ) : (
               "1"
             )}
           </div>
@@ -72,7 +73,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => {
             )}`}
           >
             {isStepCompleted("verifyOtp") ? (
-              <i className="fas fa-check"></i>
+              <FaCheck />
             ) : (
               "2"
             )}
@@ -95,7 +96,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => {
             )}`}
           >
             {isStepCompleted("resetPassword") ? (
-              <i className="fas fa-check"></i>
+              <FaCheck />
             ) : (
               "3"
             )}

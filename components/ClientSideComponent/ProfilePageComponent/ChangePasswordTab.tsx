@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import StepIndicator, { Step } from "./StepIndicatorToResetPassword"; // Adjust the path as needed
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function ChangePasswordTab() {
   // Step tracking
@@ -169,11 +170,26 @@ export default function ChangePasswordTab() {
       {/* Success Screen */}
       {currentStep === "success" && (
         <div className="text-center space-y-4">
-          <i className="fas fa-check-circle text-5xl text-green-500"></i>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-5xl text-green-500 mx-auto"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M9 12l2 2l4-4" />
+          </svg>
           <p className="text-xl font-semibold">Password Reset Successful!</p>
           {/* <button onClick={handleGoBack} className={buttonClasses}>
-            Go Back
-          </button> */}
+              Go Back
+              </button> */}
         </div>
       )}
 
@@ -240,9 +256,9 @@ export default function ChangePasswordTab() {
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
               >
                 {showNewPassword ? (
-                  <i className="fas fa-eye-slash"></i>
+                  <FaEyeSlash className="w-5 h-5" />
                 ) : (
-                  <i className="fas fa-eye"></i>
+                  <FaEye className="w-5 h-5" />
                 )}
               </button>
             </div>
@@ -266,9 +282,9 @@ export default function ChangePasswordTab() {
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
               >
                 {showConfirmPassword ? (
-                  <i className="fas fa-eye-slash"></i>
+                  <FaEyeSlash className="w-5 h-5" />
                 ) : (
-                  <i className="fas fa-eye"></i>
+                  <FaEye className="w-5 h-5" />
                 )}
               </button>
             </div>

@@ -6,7 +6,7 @@ import { getAllCategories } from "@/api/ShopPageApi";
 import { Category } from "@/components/ClientSideComponent/ShopPageComponent.tsx/type";
 
 const navItems = [
-  { name: "Home", path: "/"},
+  { name: "Home", path: "/" },
   { name: "Products", path: "/shop" },
   { name: "Health Blog", path: "/blogs" },
   { name: "Contact", path: "/contact" },
@@ -49,12 +49,31 @@ export default function MobileNavigation({
           className="flex justify-between items-center w-full text-[var(--textColor)] hover:text-white hover:bg-[var(--mainColor)] p-2 rounded-md"
         >
           <span>Categories</span>
-          <i
-            className={`fa-solid ${
-              isCategoriesOpen ? "fa-caret-up" : "fa-caret-down"
-            }`}
-          ></i>
+          {isCategoriesOpen ? (
+            // Caret Up SVG
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 512"
+              fill="currentColor"
+              className="w-4 h-4"
+              aria-hidden="true"
+            >
+              <path d="M31.5 320h257c28.4 0 42.7-34.5 22.6-54.6l-128.5-128c-12.5-12.5-32.8-12.5-45.3 0L9 265.4C-10.1 285.5 4.2 320 31.5 320z" />
+            </svg>
+          ) : (
+            // Caret Down SVG
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 512"
+              fill="currentColor"
+              className="w-4 h-4"
+              aria-hidden="true"
+            >
+              <path d="M288 192H31.5c-28.4 0-42.7 34.5-22.6 54.6l128.5 128c12.5 12.5 32.8 12.5 45.3 0l128.5-128c20.1-20.1 5.8-54.6-22.6-54.6z" />
+            </svg>
+          )}
         </button>
+
         {isCategoriesOpen && (
           <ul className="ml-4 mt-2 flex flex-col space-y-2">
             {categories.map((category) => (
@@ -66,16 +85,32 @@ export default function MobileNavigation({
                   >
                     <span>{category.name}</span>
                     {category.child_categories &&
-                      category.child_categories.length > 0 && (
-                        <i
-                          className={`fa-solid ${
-                            openSubCategory === Number(category.id)
-                              ? "fa-caret-up"
-                              : "fa-caret-down"
-                          }`}
-                        ></i>
-                      )}
+                      category.child_categories.length > 0 &&
+                      (openSubCategory === Number(category.id) ? (
+                        // Caret Up SVG
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 320 512"
+                          fill="currentColor"
+                          className="w-4 h-4"
+                          aria-hidden="true"
+                        >
+                          <path d="M31.5 320h257c28.4 0 42.7-34.5 22.6-54.6l-128.5-128c-12.5-12.5-32.8-12.5-45.3 0L9 265.4C-10.1 285.5 4.2 320 31.5 320z" />
+                        </svg>
+                      ) : (
+                        // Caret Down SVG
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 320 512"
+                          fill="currentColor"
+                          className="w-4 h-4"
+                          aria-hidden="true"
+                        >
+                          <path d="M288 192H31.5c-28.4 0-42.7 34.5-22.6 54.6l128.5 128c12.5 12.5 32.8 12.5 45.3 0l128.5-128c20.1-20.1 5.8-54.6-22.6-54.6z" />
+                        </svg>
+                      ))}
                   </button>
+
                   {openSubCategory === Number(category.id) &&
                     category.child_categories &&
                     category.child_categories.length > 0 && (

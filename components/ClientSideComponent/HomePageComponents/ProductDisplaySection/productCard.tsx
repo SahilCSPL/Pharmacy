@@ -1,46 +1,49 @@
-"use client"
+"use client";
 
-import type React from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { useDispatch, useSelector } from "react-redux"
-import { toast } from "react-toastify"
-import { addToCart } from "@/redux/cartSlice"
-import { addToWishlist, removeFromWishlist as removeFromWishlistAction } from "@/redux/wishlistSlice"
+import type React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { addToCart } from "@/redux/cartSlice";
+import {
+  addToWishlist,
+  removeFromWishlist as removeFromWishlistAction,
+} from "@/redux/wishlistSlice";
 import {
   addOrUpdateWishlist as apiAddOrUpdateWishlist,
   removeFromWishlist as apiRemoveFromWishlist,
-} from "@/api/wishlistApi"
-import { addOrUpdateCart } from "@/api/cartPageApi"
-import type { RootState } from "@/redux/store"
-import { Product } from "../../ShopPageComponent.tsx/type"
+} from "@/api/wishlistApi";
+import { addOrUpdateCart } from "@/api/cartPageApi";
+import type { RootState } from "@/redux/store";
+import { Product } from "../../ShopPageComponent.tsx/type";
 
 const formatPrice = (price: number, currency = "INR") => {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: currency,
     minimumFractionDigits: 2,
-  }).format(price)
-}
+  }).format(price);
+};
 
 interface ProductCardProps {
-  product: Product
+  product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const dispatch = useDispatch()
-  const token = useSelector((state: RootState) => state.user.token)
-  const customerId = useSelector((state: RootState) => state.user.id)
-  const wishlistItems = useSelector((state: RootState) => state.wishlist.items)
+  const dispatch = useDispatch();
+  const token = useSelector((state: RootState) => state.user.token);
+  const customerId = useSelector((state: RootState) => state.user.id);
+  const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
   // Check if the product is already in the wishlist
-  const isWishlisted = wishlistItems.some((item) => item.id === product.id)
+  const isWishlisted = wishlistItems.some((item) => item.id === product.id);
 
   // Create a URL that includes both a slug and product id
-  const productUrl = `/product/${product.id}`
+  const productUrl = `/product/${product.id}`;
 
   const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
+    e.stopPropagation();
 
     // Immediately update local Redux state with full product details
     dispatch(
@@ -50,8 +53,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         name: product.name,
         price: product.base_price.toString(),
         image: product.images?.[0],
-      }),
-    )
+      })
+    );
 
     // Then attempt to update the backend if logged in
     if (token && customerId) {
@@ -63,23 +66,25 @@ export default function ProductCard({ product }: ProductCardProps) {
             product_id: product.id,
             quantity: 1,
           },
-          token,
-        )
-        toast.success("Product added successfully!")
+          token
+        );
+        toast.success("Product added successfully!");
       } catch (error) {
-        console.error("Error adding product to cart:", error)
-        toast.error("Failed to update cart on backend.")
+        console.error("Error adding product to cart:", error);
+        toast.error("Failed to update cart on backend.");
       }
     } else {
-      toast.success("Product added to cart locally!")
+      toast.success("Product added to cart locally!");
     }
-  }
+  };
 
-  const handleWishlistToggle = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
+  const handleWishlistToggle = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.stopPropagation();
     if (!token || !customerId) {
-      toast.error("Please log in to update your wishlist.")
-      return
+      toast.error("Please log in to update your wishlist.");
+      return;
     }
 
     if (isWishlisted) {
@@ -91,14 +96,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             customer_id: customerId,
             product_id: product.id,
           },
-          token,
-        )
+          token
+        );
         // Update Redux state
-        dispatch(removeFromWishlistAction(product.id))
-        toast.success("Removed from wishlist!")
+        dispatch(removeFromWishlistAction(product.id));
+        toast.success("Removed from wishlist!");
       } catch (error) {
-        console.error("Error removing from wishlist:", error)
-        toast.error("Failed to remove from wishlist on backend.")
+        console.error("Error removing from wishlist:", error);
+        toast.error("Failed to remove from wishlist on backend.");
       }
     } else {
       // Add to wishlist
@@ -109,17 +114,17 @@ export default function ProductCard({ product }: ProductCardProps) {
             customer_id: customerId,
             product_id: product.id,
           },
-          token,
-        )
+          token
+        );
         // Update Redux state
-        dispatch(addToWishlist(product))
-        toast.success("Added to wishlist!")
+        dispatch(addToWishlist(product));
+        toast.success("Added to wishlist!");
       } catch (error) {
-        console.error("Error adding to wishlist:", error)
-        toast.error("Failed to add to wishlist on backend.")
+        console.error("Error adding to wishlist:", error);
+        toast.error("Failed to add to wishlist on backend.");
       }
     }
-  }
+  };
 
   return (
     <div className="items-center pb-3 px-3 bg-white rounded-[5px] mx-2 border hover:shadow-md transition-transform duration-300 transform">
@@ -127,11 +132,40 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="bg-blue-100 text-[--mainColor] px-2 py-1 text-[10px]">
           {product.base_and_selling_price_difference_in_percent}% off
         </p>
-        <button onClick={handleWishlistToggle} aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}>
+        <button
+          onClick={handleWishlistToggle}
+          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        >
           {isWishlisted ? (
-            <i className="fa-solid fa-heart text-[20px] text-[--mainColor]"></i>
+            // Filled heart icon
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+              className="text-[--mainColor]"
+            >
+              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
           ) : (
-            <i className="fa-regular fa-heart text-[20px] text-[--mainColor]"></i>
+            // Outline heart icon
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="text-[--mainColor]"
+            >
+              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
           )}
         </button>
       </div>
@@ -151,12 +185,20 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       <div className="product-details w-full">
         <Link href={productUrl}>
-          <h3 className="text-[--textColor] text-sm lg:text-base font-bold truncate cursor-pointer">{product.name}</h3>
+          <h3 className="text-[--textColor] text-sm lg:text-base font-bold truncate cursor-pointer">
+            {product.name}
+          </h3>
         </Link>
-        <p className="text-[--textColor] text-[14px] truncate">{product.category_name}</p>
+        <p className="text-[--textColor] text-[14px] truncate">
+          {product.category_name}
+        </p>
         <div className="flex items-baseline justify-between text-sm">
-          <span className="text-red-500 font-bold pe-1">{formatPrice(product.base_price)}</span>
-          <span className="text-gray-500 line-through">{formatPrice(product.selling_price)}</span>
+          <span className="text-red-500 font-bold pe-1">
+            {formatPrice(product.base_price)}
+          </span>
+          <span className="text-gray-500 line-through">
+            {formatPrice(product.selling_price)}
+          </span>
         </div>
       </div>
 
@@ -170,6 +212,5 @@ export default function ProductCard({ product }: ProductCardProps) {
         </button>
       </div>
     </div>
-  )
+  );
 }
-
