@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const rubik = Rubik({
   subsets: ["latin"],
-  weight: ["300", "400", "700"], // Add desired font weights
+  weight: ["300", "400","500", "600", "700"], // Add desired font weights
 });
 
 export const metadata: Metadata = {

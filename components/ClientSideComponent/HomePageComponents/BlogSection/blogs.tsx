@@ -35,7 +35,7 @@ export function BlogSectionClient({ blogs }: BlogSectionClientProps) {
         {blogs.map((blog, index) => (
           <div
             key={blog.id}
-            className={`bg-white rounded-lg mx-[10px] bg-[#edf8fa] shadow ${index > 1 ? "hidden lg:block" : "block"}`}
+            className={`bg-white rounded-lg mx-[10px] bg-[#edf8fa]  ${index > 1 ? "hidden lg:block" : "block"}`}
           >
             <SingleBlogCard blog={blog} />
           </div>
