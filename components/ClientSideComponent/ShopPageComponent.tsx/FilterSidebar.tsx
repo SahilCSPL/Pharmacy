@@ -7,11 +7,16 @@ import { Category, ShopFilters } from "./type"
 interface FilterSidebarProps {
   categories: Category[]
   filters: ShopFilters
-  setFilters: React.Dispatch<React.SetStateAction<ShopFilters>>
+  updateSubCategories: (categoryId: number, checked: boolean) => void
   resetFilters: () => void
 }
 
-export default function FilterSidebar({ categories, filters, setFilters, resetFilters }: FilterSidebarProps) {
+export default function FilterSidebar({
+  categories,
+  filters,
+  updateSubCategories,
+  resetFilters,
+}: FilterSidebarProps) {
   const [openCategory, setOpenCategory] = useState<string>("")
 
   const toggleCategory = (categoryId: string) => {
@@ -19,15 +24,8 @@ export default function FilterSidebar({ categories, filters, setFilters, resetFi
   }
 
   const handleSubCategoryChange = (id: number) => {
-    setFilters((prevFilters) => {
-      const isSelected = prevFilters.subCategories.includes(id)
-      return {
-        ...prevFilters,
-        subCategories: isSelected
-          ? prevFilters.subCategories.filter((catId) => catId !== id)
-          : [...prevFilters.subCategories, id],
-      }
-    })
+    const isSelected = filters.subCategories.includes(id)
+    updateSubCategories(id, !isSelected)
   }
 
   return (
@@ -76,4 +74,3 @@ export default function FilterSidebar({ categories, filters, setFilters, resetFi
     </div>
   )
 }
-

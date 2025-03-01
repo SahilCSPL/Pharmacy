@@ -8,7 +8,7 @@ import { Category, ShopFilters } from "./type"
 interface MobileFilterOverlayProps {
   categories: Category[]
   filters: ShopFilters
-  setFilters: React.Dispatch<React.SetStateAction<ShopFilters>>
+  updateSubCategories: (categoryId: number, checked: boolean) => void
   resetFilters: () => void
   onClose: () => void
 }
@@ -16,7 +16,7 @@ interface MobileFilterOverlayProps {
 export default function MobileFilterOverlay({
   categories,
   filters,
-  setFilters,
+  updateSubCategories,
   resetFilters,
   onClose,
 }: MobileFilterOverlayProps) {
@@ -34,11 +34,15 @@ export default function MobileFilterOverlay({
             &times;
           </button>
         </div>
-        <FilterSidebar categories={categories} filters={filters} setFilters={setFilters} resetFilters={resetFilters} />
+        <FilterSidebar
+          categories={categories}
+          filters={filters}
+          updateSubCategories={updateSubCategories}
+          resetFilters={resetFilters}
+        />
       </div>
       {/* Clicking outside the sidebar closes the filter */}
       <div className="flex-1" onClick={onClose}></div>
     </div>
   )
 }
-
