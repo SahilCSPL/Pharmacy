@@ -37,7 +37,7 @@ export default function TestimonialSection() {
     <section
       className="bg-cover bg-center py-4 lg:py-5"
       style={{
-        backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/background/testimonial-bg.jpg)",
+        backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/background/testimonial-bg.webp)",
       }}
     >
       <div className="container mx-auto px-4 testimonial">
