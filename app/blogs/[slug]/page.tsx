@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getAllBlogs, Blog } from "@/api/blogPageApi";
-import BlogCard from "@/components/ServerSideComponent/HomePageComponent/BlogCard";
+import SingleBlogCard from "@/components/ServerSideComponent/HomePageComponents/BlogSection/singleBlogCard";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -65,7 +65,7 @@ export default async function SingleBlogPage({ params }: PageProps) {
           <h2 className="text-2xl font-semibold mb-4">Other Blogs</h2>
           <div className="space-y-4">
             {otherBlogs.map((otherBlog: Blog) => (
-              <BlogCard blog={otherBlog} key={otherBlog.id} />
+              <SingleBlogCard blog={otherBlog} key={otherBlog.id} />
             ))}
           </div>
         </aside>

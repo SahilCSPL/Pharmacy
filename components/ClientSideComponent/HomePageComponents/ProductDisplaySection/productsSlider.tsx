@@ -1,32 +1,32 @@
-"use client";
+"use client"
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { useRef, useState } from "react";
-import { Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import ProductCard from "../../ServerSideComponent/HomePageComponent/ProductCard";
-import { Product } from "../ShopPageComponent.tsx/type";
-import { NavigationOptions } from "swiper/types";
+import { Swiper, SwiperSlide } from "swiper/react"
+import { useRef, useState } from "react"
+import { Navigation } from "swiper/modules"
+import type { NavigationOptions } from "swiper/types"
 
-type ProductSliderProps = {
-  products: Product[];
-  title: string;
-};
+// Import Swiper styles
+import "swiper/css"
+import "swiper/css/navigation"
+import { Product } from "../../ShopPageComponent.tsx/type"
+import ProductCard from "./productCard"
+
+interface ProductSliderProps {
+  products: Product[]
+  title: string
+}
 
 export default function ProductSlider({ products, title }: ProductSliderProps) {
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
+  const [isBeginning, setIsBeginning] = useState(true)
+  const [isEnd, setIsEnd] = useState(false)
 
-  const prevRef = useRef<HTMLButtonElement>(null);
-  const nextRef = useRef<HTMLButtonElement>(null);
+  const prevRef = useRef<HTMLButtonElement>(null)
+  const nextRef = useRef<HTMLButtonElement>(null)
 
   return (
     <div>
       <div className="flex justify-between items-center mx-3">
-        <h2 className="text-[20px] lg:text-[35px] text-white font-bold">
-          {title}
-        </h2>
+        <h2 className="text-[20px] lg:text-[35px] text-white font-bold">{title}</h2>
         <div className="flex space-x-3 mb-2">
           <button
             ref={prevRef}
@@ -71,13 +71,13 @@ export default function ProductSlider({ products, title }: ProductSliderProps) {
             swiper.params.navigation &&
             typeof swiper.params.navigation !== "boolean"
           ) {
-            (swiper.params.navigation as NavigationOptions).prevEl = prevRef.current;
-            (swiper.params.navigation as NavigationOptions).nextEl = nextRef.current;
+            ;(swiper.params.navigation as NavigationOptions).prevEl = prevRef.current
+            ;(swiper.params.navigation as NavigationOptions).nextEl = nextRef.current
           }
         }}
         onSlideChange={(swiper) => {
-          setIsBeginning(swiper.isBeginning);
-          setIsEnd(swiper.isEnd);
+          setIsBeginning(swiper.isBeginning)
+          setIsEnd(swiper.isEnd)
         }}
       >
         {products.map((product) => (
@@ -87,5 +87,6 @@ export default function ProductSlider({ products, title }: ProductSliderProps) {
         ))}
       </Swiper>
     </div>
-  );
+  )
 }
+

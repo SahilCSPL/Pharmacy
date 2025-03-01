@@ -3,7 +3,7 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { Product } from "../ShopPageComponent.tsx/type";
-import ProductCard from "@/components/ServerSideComponent/HomePageComponent/ProductCard";
+import ProductCard from "../HomePageComponents/ProductDisplaySection/productCard";
 
 type RelatedProductsProps = {
   relatedProducts: Product[];

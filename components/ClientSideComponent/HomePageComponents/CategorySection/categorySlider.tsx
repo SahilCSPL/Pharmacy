@@ -1,62 +1,37 @@
-"use client";
-import { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/autoplay";
-import { Autoplay } from "swiper/modules";
-import { getAllCategories } from "@/api/ShopPageApi";
-import { Category } from "../ShopPageComponent.tsx/type";
-import Link from "next/link";
+"use client"
 
-const headingBackgroundColors = [
-  "#FCE4EC",
-  "#E3F2FD",
-  "#E8F5E9",
-  "#FFF3E0",
-  "#F3E5F5",
-  "#FFEBEE",
-  "#F0F4C3",
-  "#D1C4E9",
-];
-const headingColors = [
-  "#C2185B",
-  "#1565C0",
-  "#2E7D32",
-  "#E65100",
-  "#6A1B9A",
-  "#C62828",
-  "#827717",
-  "#4527A0",
-];
+import { Swiper, SwiperSlide } from "swiper/react"
+import { Autoplay } from "swiper/modules"
+import Link from "next/link"
+import Image from "next/image"
 
-export default function CategorySlider() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// Import Swiper styles
+import "swiper/css"
+import "swiper/css/autoplay"
+import { Category } from "../../ShopPageComponent.tsx/type"
 
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const data = await getAllCategories();
-        setCategories(data.product_categories);
-        setLoading(false);
-      } catch (error) {
-        setError("Error fetching categories. Please try again later.");
-        setLoading(false);
-      }
-    }
-    fetchCategories();
-  }, []);
+const headingBackgroundColors = ["#FCE4EC", "#E3F2FD", "#E8F5E9", "#FFF3E0", "#F3E5F5", "#FFEBEE", "#F0F4C3", "#D1C4E9"]
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+const headingColors = ["#C2185B", "#1565C0", "#2E7D32", "#E65100", "#6A1B9A", "#C62828", "#827717", "#4527A0"]
+
+interface CategorySliderClientProps {
+  categories: Category[]
+}
+
+export function CategorySlider({ categories }: CategorySliderClientProps) {
+  if (!categories || categories.length === 0) {
+    return (
+      <div className="category-slider container mx-auto py-5 lg:py-10">
+        <h2 className="text-[20px] lg:text-[35px] text-[--textColor] text-center font-bold">Shop by Category</h2>
+        <p className="text-center text-gray-500 mt-4">No categories available at the moment.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="category-slider container mx-auto py-5 lg:py-10">
       <div>
-        <h2 className="text-[20px] lg:text-[35px] text-[--textColor] text-center font-bold">
-          Shop by Category
-        </h2>
+        <h2 className="text-[20px] lg:text-[35px] text-[--textColor] text-center font-bold">Shop by Category</h2>
       </div>
       <Swiper
         slidesPerView={4}
@@ -71,7 +46,6 @@ export default function CategorySlider() {
           1320: { slidesPerView: 6 },
         }}
       >
-        <div className="">
         {categories.map((category, index) => (
           <SwiperSlide key={category.id} className="my-3">
             <Link href={`/category?category_id=${category.id}`}>
@@ -84,10 +58,7 @@ export default function CategorySlider() {
                 <div
                   className="h-[80px] lg:h-[100px] rounded-tl-[5px] rounded-tr-[5px] rounded-br-[35%] rounded-bl-[35%]"
                   style={{
-                    backgroundColor:
-                      headingBackgroundColors[
-                        index % headingBackgroundColors.length
-                      ],
+                    backgroundColor: headingBackgroundColors[index % headingBackgroundColors.length],
                   }}
                 >
                   <h3
@@ -100,9 +71,11 @@ export default function CategorySlider() {
                   </h3>
                 </div>
                 <div className="category-image h-[130px] lg:h-[180px] mx-1 pb-1">
-                  <img
+                  <Image
                     src={`${process.env.NEXT_PUBLIC_API_URL}${category.image}`}
                     alt={category.name}
+                    width={200}
+                    height={200}
                     className="w-full h-[100%] object-contain rounded-md hover:scale-105 transition-transform duration-300 transform"
                   />
                 </div>
@@ -110,8 +83,8 @@ export default function CategorySlider() {
             </Link>
           </SwiperSlide>
         ))}
-        </div>
       </Swiper>
     </div>
-  );
+  )
 }
+

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Blog, getAllBlogs } from "@/api/blogPageApi";
-import BlogCard from "@/components/ServerSideComponent/HomePageComponent/BlogCard";
+import SingleBlogCard from "@/components/ServerSideComponent/HomePageComponents/BlogSection/singleBlogCard";
 
 const BlogPage = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -91,7 +91,7 @@ const BlogPage = () => {
             key={blog.id}
             className="bg-white rounded-lg mx-[10px] bg-[#edf8fa] mb-[10px] shadow"
           >
-            <BlogCard blog={blog} />
+            <SingleBlogCard blog={blog} />
           </div>
         ))}
       </div>

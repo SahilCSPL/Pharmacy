@@ -1,8 +1,8 @@
 "use client";
 import type { Product } from "@/components/ClientSideComponent/ShopPageComponent.tsx/type";
-import ProductCard from "@/components/ServerSideComponent/HomePageComponent/ProductCard";
 import Lottie from "lottie-react";
 import emptyCategory from "@/public/animation/Animation - 1740491203202.json";
+import ProductCard from "../HomePageComponents/ProductDisplaySection/productCard";
 interface ProductGridProps {
   products: Product[];
 }

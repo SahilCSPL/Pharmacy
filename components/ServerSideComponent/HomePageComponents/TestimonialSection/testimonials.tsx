@@ -1,16 +1,7 @@
-// components/testimonial/TestimonialSection.tsx
-import React from "react";
-import TestimonialsSlider from "../../ClientSideComponent/HomePageComponent/TestimonialSlider";
-
-export interface Testimonial {
-  id: number;
-  image: string;
-  comment: string;
-  name: string;
-}
+import TestimonialsSlider from "@/components/ClientSideComponent/HomePageComponents/TestimonialSection/testimonialsSlider"
 
 // Example testimonial data
-const testimonials: Testimonial[] = [
+const testimonials = [
   {
     id: 1,
     image: "/testimonial/testimonial-slide-1.webp",
@@ -39,26 +30,22 @@ const testimonials: Testimonial[] = [
       "From the moment I started using it, I noticed a remarkable difference. The exceptional craftsmanship and attention to detail make it a standout product in its category.",
     name: "Lucas Gallone",
   },
-];
+]
 
-const TestimonialSection = () => {
+export default function TestimonialSection() {
   return (
     <section
       className="bg-cover bg-center py-4 lg:py-5"
       style={{
-        backgroundImage:
-          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/background/testimonial-bg.jpg)",
+        backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/background/testimonial-bg.jpg)",
       }}
     >
       <div className="container mx-auto px-4 testimonial">
-        <h2 className="text-[20px] lg:text-[40px] text-white font-bold text-center">
-          Testimonials
-        </h2>
+        <h2 className="text-[20px] lg:text-[40px] text-white font-bold text-center">Testimonials</h2>
 
         <TestimonialsSlider testimonials={testimonials} />
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default TestimonialSection;

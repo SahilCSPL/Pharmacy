@@ -3,7 +3,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import ProductCard from "../HomePageComponent/ProductCard";
+import ProductCard from "@/components/ClientSideComponent/HomePageComponents/ProductDisplaySection/productCard";
 
 export default function WishlistInfoTab() {
   // Assume your wishlist slice stores items in state.wishlist.items

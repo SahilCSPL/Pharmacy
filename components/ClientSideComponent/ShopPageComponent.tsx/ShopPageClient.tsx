@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { getCategoryWiseProducts } from "@/api/ShopPageApi"
-import ProductCard from "@/components/ServerSideComponent/HomePageComponent/ProductCard"
 import FilterSidebar from "./FilterSidebar"
 import { Category, Product, ShopFilters } from "./type"
 import MobileFilterOverlay from "./MobileFilterOverlay"
+import ProductCard from "../HomePageComponents/ProductDisplaySection/productCard"
 
 interface ShopPageClientProps {
   initialProducts: Product[]

@@ -1,20 +1,14 @@
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Blog } from "@/api/blogPageApi";
+import Image from "next/image"
+import Link from "next/link"
+import type { Blog } from "@/api/blogPageApi"
 
 interface BlogCardProps {
-  blog: Blog;
+  blog: Blog
 }
 
-const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
-  // Assuming the API date is in the format:
-  // "Thursday, 27 February 2025, 10:20AM"
-  // We extract the date part ("27 February 2025") by splitting the string.
-  const formattedDate =
-    blog.created_at.split(",").length > 1
-      ? blog.created_at.split(",")[1].trim()
-      : blog.created_at;
+export default function SingleBlogCard({ blog }: BlogCardProps) {
+  // Format the date part from "Thursday, 27 February 2025, 10:20AM"
+  const formattedDate = blog.created_at.split(",").length > 1 ? blog.created_at.split(",")[1].trim() : blog.created_at
 
   return (
     <div className="overflow-hidden">
@@ -40,9 +34,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
       </div>
       {/* Content */}
       <div className="p-4">
-        <h3 className="text-xl font-semibold mb-2 text-[--textColor]">
-          {blog.title}
-        </h3>
+        <h3 className="text-xl font-semibold mb-2 text-[--textColor]">{blog.title}</h3>
         <p className="text-gray-600 text-sm line-clamp-2">{blog.content}</p>
         <Link
           href={`/blogs/${blog.slug}`}
@@ -52,7 +44,6 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
         </Link>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BlogCard;

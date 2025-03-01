@@ -1,6 +1,5 @@
 import Image from "next/image"
 import type { Category } from "@/components/ClientSideComponent/ShopPageComponent.tsx/type"
-import Breadcrumb from "./Breadcrumb"
 
 interface CategoryBannerProps {
   category: Category
