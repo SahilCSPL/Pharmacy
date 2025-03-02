@@ -7,14 +7,14 @@ interface CategoryBannerProps {
 
 export default function CategoryBanner({ category }: CategoryBannerProps) {
   return (
-    <div className="relative w-full h-[200px] md:h-[300px] overflow-hidden">
+    <div className="relative w-full h-[200px] md:h-[400px] overflow-hidden">
       <Image
         src={`${process.env.NEXT_PUBLIC_API_URL}${category.banner}`}
         alt={category.name}
         layout="fill"
         objectFit="cover"
       />
-      <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
+      <div className="absolute inset-0 bg-black bg-opacity-20 flex flex-col items-center justify-center">
         <h1 className="text-white text-3xl md:text-5xl font-bold">{category.name}</h1>
         {/* <Breadcrumb category={category} /> */}
       </div>

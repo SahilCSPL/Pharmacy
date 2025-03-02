@@ -38,7 +38,7 @@ export default function Home() {
         <ProductSection
           category_id="52"
           title="Nature's Healing Touch!"
-          bgImage="/background/ayurved.jpg"
+          bgImage="/background/ayurved.webp"
           contentPosition="start"
         />
       </Suspense>

@@ -7,9 +7,7 @@ import type {
   Category,
   Product,
 } from "@/components/ClientSideComponent/ShopPageComponent.tsx/type";
-import Breadcrumb from "@/components/ClientSideComponent/CategoryPageComponent/Breadcrumb";
 import CategoryBanner from "@/components/ClientSideComponent/CategoryPageComponent/CategoryBanner";
-import CategorySidebar from "@/components/ClientSideComponent/CategoryPageComponent/CategorySidebar";
 import SubCategorySlider from "@/components/ClientSideComponent/CategoryPageComponent/SubCategorySlider";
 import ProductGrid from "@/components/ClientSideComponent/CategoryPageComponent/ProductGrid";
 export default function CategoryPage() {
@@ -98,12 +96,7 @@ export default function CategoryPage() {
             <ProductGrid products={products} />
           </div>
         </div>
-        {/* <div className="md:w-1/4">
-          <CategorySidebar
-            categories={allCategories}
-            currentCategoryId={categoryId || ""}
-          />
-        </div> */}
+
       </div>
     </section>
   );
