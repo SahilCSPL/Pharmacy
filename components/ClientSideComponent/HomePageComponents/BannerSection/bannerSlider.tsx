@@ -2,6 +2,7 @@
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import type { Banner } from "@/api/homePageApi"
 
 // Import Swiper styles
@@ -52,15 +53,18 @@ export function BannerSlider({ banners }: BannerClientProps) {
       >
         {banners.map((slide, index) => (
           <SwiperSlide key={slide.sequence_number}>
-            <div
-              className="relative w-full h-[400px] lg:h-[500px] bg-cover bg-center flex items-center"
-              style={{
-                backgroundImage: `url(${process.env.NEXT_PUBLIC_API_URL}${slide.image})`,
-              }}
-            >
+            <div className="relative w-full h-[400px] lg:h-[500px]">
+              {/* Optimized image with priority for the first slide */}
+              <Image
+                src={`${process.env.NEXT_PUBLIC_API_URL}${slide.image}`}
+                alt={slide.heading}
+                fill
+                priority={index === 0} // First slide is critical
+                className="object-cover"
+              />
               <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-
-              <div className={`flex w-full container max-w-7xl mx-auto pl-4 ${styling3[index % styling3.length]}`}>
+              {/* Added flex and items-center to vertically center content */}
+              <div className={`flex items-center w-full h-[400px] lg:h-[500px] container max-w-7xl mx-auto pl-4 ${styling3[index % styling3.length]}`}>
                 <div className={`relative z-10 w-full ${styling1[index % styling1.length]}`}>
                   <p className="text-base lg:text-lg mt-4 text-white">💊 {slide.description}</p>
                   <h1 className="font-bold text-3xl md:text-4xl xl:text-7xl mt-4 leading-[1.2] sm:leading-[1.3] xl:leading-[1.1] text-white">
@@ -81,4 +85,3 @@ export function BannerSlider({ banners }: BannerClientProps) {
     </div>
   )
 }
-
