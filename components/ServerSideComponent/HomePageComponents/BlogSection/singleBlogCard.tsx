@@ -47,6 +47,7 @@ export default function SingleBlogCard({ blog }: BlogCardProps) {
           <Link
             href={`/blogs/${blog.slug}`}
             className="inline-flex hover:text-[--mainColor] transition-colors duration-300"
+            aria-label={blog.slug}
           >
             <svg
               width="16"
