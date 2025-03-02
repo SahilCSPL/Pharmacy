@@ -38,16 +38,11 @@ export function BrandsClient({ brandList }: BrandsClientProps) {
             <SwiperSlide key={brand.id}>
               <div className="brand-item text-center h-[100px] flex items-center border p-3 mx-1">
                 <Image
-                  src={brand.image || "/placeholder.svg"}
+                  src={brand.image}
                   alt={brand.name}
                   width={200}
                   height={100}
                   className="brand-image mx-auto object-contain h-[100%]"
-                  onError={(e) => {
-                    // TypeScript doesn't allow direct assignment to currentTarget.src
-                    const target = e.target as HTMLImageElement
-                    target.src = "/brands/default.png"
-                  }}
                 />
               </div>
             </SwiperSlide>
