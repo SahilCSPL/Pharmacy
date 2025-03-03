@@ -127,7 +127,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="items-center pb-3 px-3 bg-white rounded-[5px] mx-2 border hover:shadow-md transition-transform duration-300 transform">
+    <div className="items-center pb-3 px-3 bg-white rounded-[5px] border hover:shadow-md transition-transform duration-300 transform">
       <div className="flex pt-3 justify-between">
         <p className="bg-blue-100 text-[--mainColor] px-2 py-1 text-[10px]">
           {product.base_and_selling_price_difference_in_percent}% off

@@ -152,12 +152,26 @@ export default function ShopPageClient({
   };
 
   return (
-    <div className="flex flex-col md:flex-row md:mx-5 mt-5 max-w-8xl p-4 md:p-0 lg:p-4">
+    <div className="flex flex-col md:flex-row md:mx-5 md:mt-5 max-w-8xl p-4 md:p-0 lg:p-4">
       {/* Sidebar for Desktop */}
-      <div className="hidden md:block md:w-1/3 lg:w-1/4 xl:w-1/5 pr-4">
-        <h2 className="text-lg font-bold mb-3 p-4 bg-[--mainColor] text-white rounded-lg">
-          Filters
-        </h2>
+      <div className="hidden md:block md:w-1/3 lg:w-1/4 xl:w-1/5 pr-3 xl:pr-4 ">
+        <div className="flex items-center text-lg font-medium mb-3 p-4 bg-[--mainColor] text-white rounded-lg">
+          <svg
+            width="20"
+            height="20"
+            stroke="2"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill="currentColor"
+              fillRule="evenodd"
+              d="M4.833 6.5a1.667 1.667 0 1 1 3.334 0 1.667 1.667 0 0 1-3.334 0M4.05 7H2.5a.5.5 0 0 1 0-1h1.55a2.5 2.5 0 0 1 4.9 0h8.55a.5.5 0 0 1 0 1H8.95a2.5 2.5 0 0 1-4.9 0m11.117 6.5a1.667 1.667 0 1 0-3.334 0 1.667 1.667 0 0 0 3.334 0M13.5 11a2.5 2.5 0 0 1 2.45 2h1.55a.5.5 0 0 1 0 1h-1.55a2.5 2.5 0 0 1-4.9 0H2.5a.5.5 0 0 1 0-1h8.55a2.5 2.5 0 0 1 2.45-2"
+            ></path>
+          </svg>
+          <h2 className="ml-1">Filter</h2>
+        </div>
         <FilterSidebar
           categories={initialCategories}
           filters={filters}
@@ -167,18 +181,46 @@ export default function ShopPageClient({
       </div>
 
       {/* Main Content Area */}
-      <div className="w-full md:w-2/3 lg:w-3/4 xl:w-4/5 md:pl-4">
+      <div className="w-full md:w-2/3 lg:w-3/4 xl:w-4/5 pl:3 xl:pl-4">
         {/* Mobile filter button */}
-        <div className="block md:hidden mb-4">
+        <div className="flex justify-between items-center md:hidden md:mb-4">
           <button
             onClick={() => setMobileFilterOpen(true)}
-            className="w-full bg-[--mainColor] text-white py-2 rounded-md"
+            className="border rounded-full border-[--textColor] rounded py-2 px-4 flex p-2 gap-2 items-center bg-white"
           >
+            <svg
+              width="20"
+              height="20"
+              stroke="2"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M4.833 6.5a1.667 1.667 0 1 1 3.334 0 1.667 1.667 0 0 1-3.334 0M4.05 7H2.5a.5.5 0 0 1 0-1h1.55a2.5 2.5 0 0 1 4.9 0h8.55a.5.5 0 0 1 0 1H8.95a2.5 2.5 0 0 1-4.9 0m11.117 6.5a1.667 1.667 0 1 0-3.334 0 1.667 1.667 0 0 0 3.334 0M13.5 11a2.5 2.5 0 0 1 2.45 2h1.55a.5.5 0 0 1 0 1h-1.55a2.5 2.5 0 0 1-4.9 0H2.5a.5.5 0 0 1 0-1h8.55a2.5 2.5 0 0 1 2.45-2"
+              ></path>
+            </svg>
             Filter
           </button>
+          <div className="">
+            {/* <label className="font-semibold mx-2 text-sm md:text-base">
+              Sort by:
+            </label> */}
+            <select
+              className="border rounded-full border-[--textColor] rounded p-2 w-[150px] md:w-[180px]"
+              value={filters.sort}
+              onChange={(e) => handleSortChange(e.target.value)}
+            >
+              <option value="">Sort by</option>
+              <option value="price-low-high">Price: Low to High</option>
+              <option value="price-high-low">Price: High to Low</option>
+            </select>
+          </div>
         </div>
         {/* Sort and Selected Filters Container */}
-        <div className="flex flex-col md:flex-row md:justify-between items-start md:items-end pb-4">
+        <div className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-end pb-4">
           <div className="flex flex-wrap items-center gap-2 mb-4 md:mb-0">
             {filters.subCategories.length > 0 && (
               <>
@@ -208,16 +250,16 @@ export default function ShopPageClient({
               </>
             )}
           </div>
-          <div className="flex items-center p-2">
-            <label className="font-semibold mx-2 text-sm md:text-base">
+          <div className="flex items-center p-2 hidden md:block">
+            {/* <label className="font-semibold mx-2 text-sm md:text-base">
               Sort by:
-            </label>
+            </label> */}
             <select
-              className="border rounded p-2 w-[120px] md:w-[180px] mt-1"
+              className="border rounded p-2 w-[180px] mt-1"
               value={filters.sort}
               onChange={(e) => handleSortChange(e.target.value)}
             >
-              <option value="">Default</option>
+              <option value="">Sort by</option>
               <option value="price-low-high">Price: Low to High</option>
               <option value="price-high-low">Price: High to Low</option>
             </select>
@@ -225,7 +267,7 @@ export default function ShopPageClient({
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-4 h-[700px] overflow-y-auto bg-white rounded-lg">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 h-[700px] overflow-y-auto bg-white rounded-lg">
           {displayedProducts.length > 0 ? (
             displayedProducts.map((product) => (
               <div key={product.id} className="mb-3">

@@ -10,12 +10,12 @@ export default function WishlistInfoTab() {
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
   return (
-    <div className="p-3 md:p-4">
+    <div className="">
       <h2 className="text-xl font-semibold mb-4">Wishlist</h2>
       {wishlistItems.length === 0 ? (
         <p className="text-gray-400">Your wishlist is empty.</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {wishlistItems.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

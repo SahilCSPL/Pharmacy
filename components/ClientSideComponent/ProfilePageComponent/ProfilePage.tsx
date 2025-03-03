@@ -44,6 +44,7 @@ const router = useRouter();
         })
         .catch((error) => {
           console.error("Error fetching addresses:", error);
+          router.push("/user-login");
         });
     } else {
       router.push("/user-login")
