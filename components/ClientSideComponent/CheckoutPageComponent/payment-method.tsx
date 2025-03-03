@@ -21,7 +21,7 @@ export default function PaymentMethodSection({ paymentMethod, setPaymentMethod }
           />
           <span>Cash on Delivery</span>
         </label>
-        {/* Uncomment for online payment option
+        Uncomment for online payment option
         <label className="flex items-center cursor-pointer">
           <input
             type="radio"
@@ -33,7 +33,6 @@ export default function PaymentMethodSection({ paymentMethod, setPaymentMethod }
           />
           <span>Online</span>
         </label>
-        */}
       </div>
     </div>
   )

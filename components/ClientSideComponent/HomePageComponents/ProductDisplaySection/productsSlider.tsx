@@ -111,9 +111,10 @@ export default function ProductSlider({ products, title }: ProductSliderProps) {
           setIsBeginning(swiper.isBeginning);
           setIsEnd(swiper.isEnd);
         }}
+        
       >
         {products.map((product) => (
-          <SwiperSlide key={product.id}>
+          <SwiperSlide key={product.id} className="px-2">
             <ProductCard product={product} />
           </SwiperSlide>
         ))}
