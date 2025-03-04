@@ -29,6 +29,7 @@ export default function CheckoutPageClient() {
   // Auth info from Redux
   const token = useSelector((state: RootState) => state.user.token);
   const customer = useSelector((state: RootState) => state.user.id);
+  const user = useSelector((state: RootState) => state.user);
   const localCart = useSelector((state: RootState) => state.cart);
 
   // State
@@ -36,6 +37,7 @@ export default function CheckoutPageClient() {
   const [addresses, setAddresses] = useState<Address[] | null>(null);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [razorpayPaymentId, setRazorpayPaymentId] = useState<string>("")
 
   // Address state
   const [selectedDeliveryAddress, setSelectedDeliveryAddress] =
@@ -159,6 +161,44 @@ export default function CheckoutPageClient() {
     }
   }, [localCart.cartItems, token, customer]);
 
+  const handleRazorpayPayment = () => {
+    return new Promise<string>((resolve, reject) => {
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: Math.round(finalTotal * 100), // Convert to paisa and ensure it's an integer
+        currency: "INR",
+        name: "MEd'Z pharmacy",
+        description: "Payment for Order",
+        handler: (response: any) => {
+          if (response.razorpay_payment_id) {
+            resolve(response.razorpay_payment_id)
+          } else {
+            reject(new Error("Payment failed"))
+          }
+        },
+        prefill: {
+          name: token && selectedDeliveryAddress ? user.first_name : shippingAddress.fullName,
+          email: token && selectedDeliveryAddress ? user.email : "guestUser@gmail.com",   
+          contact: token && selectedDeliveryAddress ? user.phone_number : shippingAddress.phone,
+        },
+        theme: {
+          color: "#24A148",
+        },
+        modal: {
+          ondismiss: () => {
+            reject(new Error("Payment cancelled"))
+          },
+        },
+      }
+
+      try {
+        const razorpay = new window.Razorpay(options)
+        razorpay.open()
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
   const handlePlaceOrder = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -169,6 +209,7 @@ export default function CheckoutPageClient() {
       token && cartData ? cartData.products : localCart.cartItems;
     if (!cartItems || cartItems.length === 0) {
       toast.error("Your cart is empty!");
+      setIsLoading(false)
       return;
     }
 
@@ -176,10 +217,12 @@ export default function CheckoutPageClient() {
     if (token) {
       if (!addresses || addresses.length === 0) {
         toast.error("No addresses found. Please add an address.");
+        setIsLoading(false)
         return;
       }
       if (!selectedDeliveryAddress || !selectedBillingAddress) {
         toast.error("Please select both delivery and billing addresses.");
+        setIsLoading(false)
         return;
       }
     } else {
@@ -194,6 +237,7 @@ export default function CheckoutPageClient() {
         !shippingAddress.phone
       ) {
         toast.error("Please fill in your shipping address.");
+        setIsLoading(false)
         return;
       }
 
@@ -208,8 +252,24 @@ export default function CheckoutPageClient() {
           !billingAddress.country
         ) {
           toast.error("Please fill in your billing address.");
+          setIsLoading(false)
           return;
         }
+      }
+    }
+
+    let paymentId = ""
+
+    // Handle online payment if selected
+    if (paymentMethod === "Online") {
+      try {
+        paymentId = await handleRazorpayPayment()
+        setRazorpayPaymentId(paymentId)
+      } catch (error) {
+        console.error("Payment failed:", error)
+        toast.error("Payment failed or was cancelled. Please try again.")
+        setIsLoading(false)
+        return
       }
     }
 
@@ -221,7 +281,7 @@ export default function CheckoutPageClient() {
       discount: 0,
       final_total: finalTotal,
       is_payment_done: paymentMethod === "online" ? true : false,
-      payment_transaction_id: paymentMethod === "online" ? "TXN123" : "",
+      payment_transaction_id: paymentMethod === "Online" ? paymentId : "",
       payment_type: paymentMethod,
       payment_datetime: new Date().toISOString(),
       billing_address:
@@ -323,6 +383,7 @@ export default function CheckoutPageClient() {
           <PaymentMethodSection
             paymentMethod={paymentMethod}
             setPaymentMethod={setPaymentMethod}
+            finalTotal={finalTotal}
           />
 
           <div>
