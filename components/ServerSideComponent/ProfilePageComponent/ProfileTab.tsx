@@ -10,12 +10,12 @@ export default function ProfileTabs({
   setActiveTab,
 }: ProfileTabsProps) {
   const tabs = [
-    { key: "accountInfo", label: "Account info" },
+    { key: "accountInfo", label: "Account Info" },
     { key: "manageAddress", label: "Manage Address" },
-    { key: "orderInfo", label: "Order info" },
+    { key: "orderInfo", label: "Order Info" },
     // { key: "cartInfo", label: "Cart info" },
-    { key: "wishlistInfo", label: "Wishlist info" },
-    { key: "changePassword", label: "Change password" },
+    { key: "wishlistInfo", label: "Wishlist Info" },
+    { key: "changePassword", label: "Change Password" },
   ];
 
   return (
