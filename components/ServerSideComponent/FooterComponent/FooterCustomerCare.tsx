@@ -8,7 +8,7 @@ type CustomerCareLink = {
 const customerCareLinks: CustomerCareLink[] = [
   { label: "Health Blogs", href: "/blogs"},
   // { label: "FAQ", href: "/faq" },
-  { label: "Contact Us", href: "/contact_us"},
+  { label: "Contact Us", href: "/contact"},
   { label: "Terms & Condition", href: "/" },
   { label: "Privacy Policy", href: "/" },
 ] as CustomerCareLink[];
