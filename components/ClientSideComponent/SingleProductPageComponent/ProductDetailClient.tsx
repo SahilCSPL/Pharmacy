@@ -9,8 +9,6 @@ import { RootState } from "@/redux/store";
 import { addOrUpdateCart } from "@/api/cartPageApi";
 import { addToCart } from "@/redux/cartSlice";
 import { ProductInfo } from "../ShopPageComponent.tsx/type";
-// Import the react-360-view component
-import React360View from "react-360-view";
 import Custom360View from "./Product360View";
 
 interface ProductDetailClientProps {
@@ -21,6 +19,8 @@ export default function ProductDetailClient({
   product,
 }: ProductDetailClientProps) {
   const [quantity, setQuantity] = useState<number>(1);
+  // Manage the current frame for the 360 view (0-indexed)
+  const [currentFrame, setCurrentFrame] = useState<number>(0);
 
   const dispatch = useDispatch();
   const token = useSelector((state: RootState) => state.user.token);
@@ -66,30 +66,34 @@ export default function ProductDetailClient({
   return (
     <div className="container mx-auto py-8 px-4 w-full md:max-w-5xl">
       <div className="flex flex-col md:flex-row gap-8">
-        {/* Left Side: 360 View */}
+        {/* Left Side: Custom 360 View */}
         <div className="md:w-1/2">
           <div className="border rounded p-2 flex justify-center items-center">
-          <Custom360View
+            <Custom360View
               images={product.images.map(
                 (img) => `${process.env.NEXT_PUBLIC_API_URL}${img}`
               )}
+              frame={currentFrame}
+              onFrameChange={(newFrame) => setCurrentFrame(newFrame)}
               width={400}
               height={400}
             />
           </div>
-          {/* Thumbnail slider (optional) */}
+          {/* Thumbnail slider */}
           <div className="mt-4 flex justify-center items-center">
-            <Swiper
-              spaceBetween={10}
-              slidesPerView={4}
-              className="h-[120px] w-full"
-            >
+            <Swiper spaceBetween={10} slidesPerView={4} className="h-[120px] w-full">
               {product.images.map((img, index) => (
-                <SwiperSlide key={index} className="cursor-pointer">
+                <SwiperSlide
+                  key={index}
+                  className="cursor-pointer"
+                  onClick={() => setCurrentFrame(index)}
+                >
                   <img
                     src={`${process.env.NEXT_PUBLIC_API_URL}${img}`}
                     alt={`${product.name} ${index + 1}`}
-                    className="object-contain rounded h-[100px] w-[100px]"
+                    className={`object-contain rounded h-[100px] w-[100px] ${
+                      currentFrame === index ? "border-2 border-blue-500" : ""
+                    }`}
                   />
                 </SwiperSlide>
               ))}
@@ -115,10 +119,7 @@ export default function ProductDetailClient({
           <div className="mt-4">
             <div className="flex flex-wrap gap-2 mt-2">
               {product.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="bg-gray-200 px-2 py-1 rounded-full text-sm"
-                >
+                <span key={index} className="bg-gray-200 px-2 py-1 rounded-full text-sm">
                   {tag}
                 </span>
               ))}
