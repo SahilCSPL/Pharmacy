@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { toast } from "react-toastify";
@@ -10,6 +9,9 @@ import { RootState } from "@/redux/store";
 import { addOrUpdateCart } from "@/api/cartPageApi";
 import { addToCart } from "@/redux/cartSlice";
 import { ProductInfo } from "../ShopPageComponent.tsx/type";
+// Import the react-360-view component
+import React360View from "react-360-view";
+import Custom360View from "./Product360View";
 
 interface ProductDetailClientProps {
   product: ProductInfo;
@@ -18,7 +20,6 @@ interface ProductDetailClientProps {
 export default function ProductDetailClient({
   product,
 }: ProductDetailClientProps) {
-  const [mainImage, setMainImage] = useState<string>(product.images[0]);
   const [quantity, setQuantity] = useState<number>(1);
 
   const dispatch = useDispatch();
@@ -65,33 +66,30 @@ export default function ProductDetailClient({
   return (
     <div className="container mx-auto py-8 px-4 w-full md:max-w-5xl">
       <div className="flex flex-col md:flex-row gap-8">
-        {/* Left Side: Image & Slider */}
+        {/* Left Side: 360 View */}
         <div className="md:w-1/2">
           <div className="border rounded p-2 flex justify-center items-center">
-            <Image
-              src={`${process.env.NEXT_PUBLIC_API_URL}${mainImage}`}
-              alt={product.name}
+          <Custom360View
+              images={product.images.map(
+                (img) => `${process.env.NEXT_PUBLIC_API_URL}${img}`
+              )}
               width={400}
               height={400}
-              className="object-contain rounded w-[400px] h-[400px]"
             />
           </div>
+          {/* Thumbnail slider (optional) */}
           <div className="mt-4 flex justify-center items-center">
-            <Swiper spaceBetween={10} slidesPerView={4} className="h-[120px] w-full">
+            <Swiper
+              spaceBetween={10}
+              slidesPerView={4}
+              className="h-[120px] w-full"
+            >
               {product.images.map((img, index) => (
-                <SwiperSlide
-                  key={index}
-                  onClick={() => setMainImage(img)}
-                  className="cursor-pointer"
-                >
-                  <Image
+                <SwiperSlide key={index} className="cursor-pointer">
+                  <img
                     src={`${process.env.NEXT_PUBLIC_API_URL}${img}`}
                     alt={`${product.name} ${index + 1}`}
-                    width={100}
-                    height={100}
-                    className={`object-contain rounded h-[100px] w-[100px] ${
-                      mainImage === img ? "border-2 border-blue-500" : ""
-                    }`}
+                    className="object-contain rounded h-[100px] w-[100px]"
                   />
                 </SwiperSlide>
               ))}
@@ -101,7 +99,6 @@ export default function ProductDetailClient({
 
         {/* Right Side: Product Details */}
         <div className="md:w-1/2">
-          {/* Stock Status */}
           <div className="my-1">
             {product.stock > 0 ? (
               <p className="text-green-600 font-bold bg-green-100 inline-block rounded-md py-1 px-4">
@@ -115,7 +112,6 @@ export default function ProductDetailClient({
           </div>
           <h1 className="text-2xl font-bold">{product.name}</h1>
           <p className="text-gray-600">{product.category_name}</p>
-          {/* Tags */}
           <div className="mt-4">
             <div className="flex flex-wrap gap-2 mt-2">
               {product.tags.map((tag, index) => (
@@ -161,7 +157,6 @@ export default function ProductDetailClient({
           )}
 
           <div className="flex space-x-5">
-            {/* Quantity Control */}
             <div className="mt-4 flex items-center">
               <button
                 onClick={() => handleQuantityChange(quantity - 1)}
@@ -177,7 +172,6 @@ export default function ProductDetailClient({
                 +
               </button>
             </div>
-            {/* Add to Cart Button */}
             <div className="mt-4">
               <button
                 onClick={handleAddToCart}
