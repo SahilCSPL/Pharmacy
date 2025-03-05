@@ -9,6 +9,7 @@ export interface CartItem {
   name: string;
   price: string;
   image: string;
+  variantId?: number;
 }
 
 export interface CartState {
@@ -36,6 +37,7 @@ const cartSlice = createSlice({
         name?: string;
         price?: string;
         image?: string;
+        variantId?: number;
       }>
     ) => {
       const { id, quantity, name, price, image } = action.payload;

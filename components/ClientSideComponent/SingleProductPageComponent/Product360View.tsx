@@ -70,6 +70,7 @@ export default function Custom360View({
         height,
         overflow: "hidden",
         cursor: isDragging ? "grabbing" : "grab",
+        touchAction: "none",
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
