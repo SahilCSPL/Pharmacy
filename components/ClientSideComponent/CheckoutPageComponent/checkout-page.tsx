@@ -238,6 +238,13 @@ export default function CheckoutPageClient() {
         setIsLoading(false);
         return;
       }
+    } else {
+      // For logged-in users, ensure both addresses are selected
+      if (!selectedDeliveryAddress || !selectedBillingAddress) {
+        toast.error("Please select both a delivery and a billing address.");
+        setIsLoading(false);
+        return;
+      }
     }
 
     // Validate cart
