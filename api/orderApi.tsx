@@ -35,6 +35,50 @@ export const placeOrderAPI = async (
   return data;
 };
 
+// New types for guest order payload
+export interface Address {
+  type: string;
+  address: string;
+  locality: string;
+  city: string;
+  state: string;
+  country: string;
+  zipcode: string;
+}
+
+export interface GuestOrderData {
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  sub_total: number;
+  tax: number;
+  discount: number;
+  delivery_charge: number;
+  final_total: number;
+  is_payment_done: boolean;
+  payment_transaction_id: string;
+  payment_type: string; // e.g., "Cash on Delivery"
+  payment_datetime: string;
+  billing_address: Address;
+  delivery_address: Address;
+  products: {
+    product_id: number;
+    unit_price: number;
+    quantity: number;
+  }[];
+}
+
+// New API function for guest order placement, no token required
+export const placeGuestOrderAPI = async (
+  guestOrderData: GuestOrderData
+): Promise<OrderResponse> => {
+  const endpoint = "/order/guest-place-order/";
+  const data = await APICore<OrderResponse>(endpoint, "POST", guestOrderData);
+  return data;
+};
+
 // For fetching order details
 export interface OrderItem {
   id: number;
@@ -114,5 +158,15 @@ export const getOrderDetails =  async (
 ) : Promise<OrderDetailsResponse> => {
   const endpoint = `/order/get-customer-orders/?page=${page}&page_size=${page_size}&customer_id=${customer_id}&order_id=${order_id}`;
   const data = await APICore<OrderDetailsResponse>(endpoint, "GET", {}, token);
+  return data;
+}
+
+export const getGuestOrderDetails = async (
+  page: number,
+  page_size: number,
+  order_id: string
+) : Promise<OrderDetailsResponse> => {
+  const endpoint = `/order/get-single-orders/?page=${page}&page_size=${page_size}&search=${order_id}`;
+  const data = await APICore<OrderDetailsResponse>(endpoint, "GET", {});
   return data;
 }

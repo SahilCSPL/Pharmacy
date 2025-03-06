@@ -31,7 +31,7 @@ export default function PaymentMethodSection({
       <h2 className="text-2xl font-bold text-white p-4 bg-[--mainColor]">
         Payment Method
       </h2>
-      <div className="flex gap-4 p-4">
+      <div className="flex flex-col gap-4 p-4">
         <label className="flex items-center cursor-pointer">
           <input
             type="radio"
@@ -41,7 +41,7 @@ export default function PaymentMethodSection({
             onChange={(e) => setPaymentMethod(e.target.value)}
             className="mr-2"
           />
-          <span>Cash on Delivery</span>
+          <span>Cash on Delivery (COD)</span>
         </label>
         <label className="flex items-center cursor-pointer">
           <input
@@ -52,7 +52,7 @@ export default function PaymentMethodSection({
             onChange={(e) => setPaymentMethod(e.target.value)}
             className="mr-2"
           />
-          <span>Online</span>
+          <span>Razorpay Secure (UPI, Cards, Wallets, NetBanking)</span>
         </label>
       </div>
     </div>

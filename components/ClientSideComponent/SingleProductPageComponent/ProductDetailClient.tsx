@@ -57,6 +57,12 @@ export default function ProductDetailClient({
     setSelectedVariant(variant);
   };
 
+  // Determine which image to use for the cart without prefixing the base URL.
+  const imageForCart =
+    selectedVariant && selectedVariant.images.length > 0
+      ? selectedVariant.images[0]
+      : product.images[0];
+
   const handleAddToCart = async () => {
     // You may want to include the variant id if one is selected.
     dispatch(
@@ -65,7 +71,7 @@ export default function ProductDetailClient({
         quantity,
         name: product.name,
         price: product.base_price,
-        image: displayImages[0] || "/default-placeholder.jpg",
+        image: imageForCart || "/default-placeholder.jpg",
         variantId: selectedVariant ? selectedVariant.id : undefined,
       })
     );
@@ -162,7 +168,7 @@ export default function ProductDetailClient({
           </div>
           {product.base_and_selling_price_difference_in_percent === "0" ? (
             <div className="mt-3">
-              <span className="text-2xl text-green-500 font-bold">
+              <span className="text-2xl text-green-500 font-medium">
                 {new Intl.NumberFormat("en-IN", {
                   style: "currency",
                   currency: "INR",
@@ -172,21 +178,21 @@ export default function ProductDetailClient({
             </div>
           ) : (
             <div className="mt-3">
-              <span className="text-xl text-green-500 font-bold">
+              <span className="text-xl text-green-500 font-medium">
                 {new Intl.NumberFormat("en-IN", {
                   style: "currency",
                   currency: "INR",
                   minimumFractionDigits: 2,
                 }).format(Number(product.base_price))}
               </span>
-              <span className="text-red-500 line-through ml-4">
+              <span className="text-red-500 line-through ml-3">
                 {new Intl.NumberFormat("en-IN", {
                   style: "currency",
                   currency: "INR",
                   minimumFractionDigits: 2,
                 }).format(Number(product.selling_price))}
               </span>
-              <span className="ml-4 text-white bg-[--mainColor] font-bold px-3 py-1 rounded-md">
+              <span className="ml-4 text-white bg-[--mainColor] font-medium px-2 py-2 rounded-md text-sm">
                 {product.base_and_selling_price_difference_in_percent}% OFF
               </span>
             </div>

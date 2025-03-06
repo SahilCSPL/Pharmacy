@@ -26,7 +26,7 @@ export default function OrderSummarySection({ subtotal, tax, deliveryCharges, fi
             <td className="p-3 text-right font-medium text-gray-800">₹ {deliveryCharges}</td>
           </tr>
           <tr className="border-t font-semibold text-gray-900">
-            <td className="py-4 px-3 text-[--mainColor]">Total</td>
+            <td className="py-4 px-3 text-[--mainColor] text-lg">Total</td>
             <td className="py-4 px-3 text-right text-lg">₹ {finalTotal.toFixed(2)}</td>
           </tr>
         </tbody>

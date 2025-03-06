@@ -172,7 +172,10 @@ body {
 .registration-form input,
 .country-code input,
 .account-form input,
-.select-address select {
+.select-address select,
+.guest-email input,
+.guest-delivery-address input,
+.guest-billing-address input {
   border: 1px solid var(--mainColor);
   outline: none;
 }

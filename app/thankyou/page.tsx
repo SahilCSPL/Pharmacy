@@ -4,7 +4,11 @@ import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { toast } from "react-toastify";
-import { getOrderDetails, OrderDetailsResponse } from "@/api/orderApi";
+import {
+  getOrderDetails,
+  getGuestOrderDetails,
+  OrderDetailsResponse,
+} from "@/api/orderApi";
 import orderPlaced from "@/public/animation/Animation - 1740397607990.json";
 import Lottie from "lottie-react";
 import Image from "next/image";
@@ -19,7 +23,7 @@ const ThankYouPage = () => {
 
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
+  console.log("Order Id : ", orderId);
   useEffect(() => {
     const fetchOrderDetails = async () => {
       if (!orderId) {
@@ -27,20 +31,16 @@ const ThankYouPage = () => {
         setLoading(false);
         return;
       }
-      if (!customer || !token) {
-        toast.error("User authentication missing.");
-        setLoading(false);
-        return;
-      }
       try {
-        // Call the API function with the required parameters.
-        const data: OrderDetailsResponse = await getOrderDetails(
-          1,
-          20,
-          customer,
-          token,
-          orderId
-        );
+        let data: OrderDetailsResponse;
+        // Check if token and customer exist for logged in user
+        if (customer && token) {
+          data = await getOrderDetails(1, 20, customer, token, orderId);
+        } else {
+          // Call guest order API if not logged in
+          data = await getGuestOrderDetails(1, 20, orderId);
+          console.log("Order Details : ", data);
+        }
         if (data.results && data.results.length > 0) {
           setOrderDetails(data.results[0]);
         } else {
@@ -80,7 +80,8 @@ const ThankYouPage = () => {
       </h1>
       <p className="mb-6 text-center">
         A confirmation mail will be sent to you at{" "}
-        <strong>{orderDetails.customer_info.email}</strong> with your complete order details.
+        <strong>{orderDetails.customer_info.email}</strong> with your complete
+        order details.
       </p>
 
       {/* Order Details Section */}
@@ -91,7 +92,8 @@ const ThankYouPage = () => {
             Order Number: {orderDetails.id}
           </h3>
           <span className="hidden md:block text-base md:text-xl font-semibold">
-            <strong>Total:</strong> ₹{orderDetails.order_info.final_total.toFixed(2)}
+            <strong>Total:</strong> ₹
+            {orderDetails.order_info.final_total.toFixed(2)}
           </span>
         </div>
 
@@ -114,7 +116,8 @@ const ThankYouPage = () => {
             </div>
             <div className="payment">
               <p>
-                <strong>Payment Method:</strong> {orderDetails.payment_info.payment_type}
+                <strong>Payment Method:</strong>{" "}
+                {orderDetails.payment_info.payment_type}
               </p>
             </div>
           </div>
@@ -123,7 +126,9 @@ const ThankYouPage = () => {
               <table className="min-w-full border border-gray-200">
                 <tbody>
                   <tr className="border-b">
-                    <td className="border px-2 py-1 font-semibold">Subtotal:</td>
+                    <td className="border px-2 py-1 font-semibold">
+                      Subtotal:
+                    </td>
                     <td className="border px-2 py-1 text-end">
                       ₹{orderDetails.order_info.sub_total.toFixed(2)}
                     </td>
@@ -135,13 +140,17 @@ const ThankYouPage = () => {
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="border px-2 py-2 font-semibold">Delivery Charge:</td>
+                    <td className="border px-2 py-2 font-semibold">
+                      Delivery Charge:
+                    </td>
                     <td className="border px-2 py-2 text-end">
                       ₹{orderDetails.order_info.delivery_charge}
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="border px-2 py-2 font-semibold">Discount:</td>
+                    <td className="border px-2 py-2 font-semibold">
+                      Discount:
+                    </td>
                     <td className="border px-2 py-2 text-end">
                       {orderDetails.order_info.discount}
                     </td>
@@ -159,7 +168,9 @@ const ThankYouPage = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="border px-2 py-2 font-semibold">Order Date:</td>
+                    <td className="border px-2 py-2 font-semibold">
+                      Order Date:
+                    </td>
                     <td className="border px-2 py-2 text-end">
                       {orderDetails.order_info.created_at_formatted}
                     </td>
@@ -203,7 +214,9 @@ const ThankYouPage = () => {
                     <td className="border px-4 py-2 text-end">
                       ₹{item.unit_price}
                     </td>
-                    <td className="border px-4 py-2 text-end">{item.quantity}</td>
+                    <td className="border px-4 py-2 text-end">
+                      {item.quantity}
+                    </td>
                   </tr>
                 ))}
               </tbody>

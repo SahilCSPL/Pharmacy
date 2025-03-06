@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/redux/store";
+import type { RootState } from "@/redux/store";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { clearCart } from "@/redux/cartSlice";
@@ -12,15 +12,20 @@ import CartSummarySection from "./cart-summary";
 import OrderSummarySection from "./order-summary";
 import PaymentMethodSection from "./payment-method";
 import CheckoutLoadingOverlay from "./checkout-loading-overlay";
+import GuestContact from "./GuestContact";
 
-import { getCart, CartResponse } from "@/api/cartPageApi";
+import { getCart, type CartResponse } from "@/api/cartPageApi";
 import {
   getCustomerAddresses,
-  CustomerAddressesResponse,
+  type CustomerAddressesResponse,
 } from "@/api/ProfilePageApi";
-import { placeOrderAPI, OrderData } from "@/api/orderApi";
+import {
+  placeOrderAPI,
+  placeGuestOrderAPI,
+  type OrderData,
+} from "@/api/orderApi";
 import { setDefaultAddress, type Address } from "@/redux/userSlice";
-import { AppDispatch } from "@/redux/store";
+import type { AppDispatch } from "@/redux/store";
 
 export default function CheckoutPageClient() {
   const router = useRouter();
@@ -37,9 +42,31 @@ export default function CheckoutPageClient() {
   const [addresses, setAddresses] = useState<Address[] | null>(null);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [razorpayPaymentId, setRazorpayPaymentId] = useState<string>("")
+  const [razorpayPaymentId, setRazorpayPaymentId] = useState<string>("");
 
-  // Address state
+  // Guest checkout state
+  const [guestEmail, setGuestEmail] = useState("");
+  const [guestEmailError, setGuestEmailError] = useState("");
+  const [shippingAddress, setShippingAddress] = useState({
+    fullName: "",
+    address: "",
+    city: "",
+    state: "Maharashtra",
+    zipcode: "",
+    country: "India",
+    phone: "",
+  });
+  const [billingAddress, setBillingAddress] = useState({
+    fullName: "",
+    address: "",
+    city: "",
+    state: "Maharashtra",
+    zipcode: "",
+    country: "India",
+  });
+  const [billingSame, setBillingSame] = useState(true);
+
+  // Address state for logged in user
   const [selectedDeliveryAddress, setSelectedDeliveryAddress] =
     useState<Address | null>(null);
   const [selectedBillingAddress, setSelectedBillingAddress] =
@@ -50,38 +77,28 @@ export default function CheckoutPageClient() {
   >(null);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 
-  // Guest checkout state
-  const [shippingAddress, setShippingAddress] = useState({
-    fullName: "",
-    address: "",
-    city: "",
-    state: "",
-    zipcode: "",
-    country: "",
-    phone: "",
-  });
-  const [billingAddress, setBillingAddress] = useState({
-    fullName: "",
-    address: "",
-    city: "",
-    state: "",
-    zipcode: "",
-    country: "",
-  });
-  const [billingSame, setBillingSame] = useState(true);
-
   // Payment method state
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
 
   // Pricing calculations
   const subtotal = localCart.cartItems.reduce(
-    (sum, item) => sum + parseFloat(item.price) * item.quantity,
+    (sum, item) => sum + Number.parseFloat(item.price) * item.quantity,
     0
   );
   const deliveryCharges = 110;
   const taxPercentage = 10;
   const tax = subtotal / taxPercentage;
   const finalTotal = subtotal + tax + deliveryCharges;
+
+  // Refs
+  // (Assuming AddressSection already exposes validateShippingForm and validateBillingForm via forwardRef)
+  const addressSectionRef = useRef<{
+    validateShippingForm: () => Promise<boolean>;
+    validateBillingForm: () => Promise<boolean>;
+  }>(null);
+
+  // Added ref for GuestContact to trigger email validation so error appears below email field.
+  const guestContactRef = useRef<{ validate: () => boolean }>(null);
 
   // Fetch cart and addresses if logged in
   useEffect(() => {
@@ -146,181 +163,219 @@ export default function CheckoutPageClient() {
     }
   };
 
-  useEffect(() => {
-    if (token && customer) {
-      const updateCart = async () => {
-        try {
-          const data = await getCart(customer, token);
-          setCartData(data);
-        } catch (error) {
-          console.error("Error updating cart:", error);
-          toast.error("Error updating cart data.");
-        }
-      };
-      updateCart();
-    }
-  }, [localCart.cartItems, token, customer]);
-
   const handleRazorpayPayment = () => {
     return new Promise<string>((resolve, reject) => {
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: Math.round(finalTotal * 100), // Convert to paisa and ensure it's an integer
         currency: "INR",
-        name: "MEd'Z pharmacy",
+        name: "Med'Z pharmacy",
         description: "Payment for Order",
         handler: (response: any) => {
           if (response.razorpay_payment_id) {
-            resolve(response.razorpay_payment_id)
+            resolve(response.razorpay_payment_id);
           } else {
-            reject(new Error("Payment failed"))
+            reject(new Error("Payment failed"));
           }
         },
         prefill: {
-          name: token && selectedDeliveryAddress ? user.first_name : shippingAddress.fullName,
-          email: token && selectedDeliveryAddress ? user.email : "guestUser@gmail.com",   
-          contact: token && selectedDeliveryAddress ? user.phone_number : shippingAddress.phone,
+          name:
+            token && selectedDeliveryAddress
+              ? user.first_name
+              : shippingAddress.fullName,
+          email:
+            token && selectedDeliveryAddress
+              ? user.email
+              : guestEmail || "guestUser@gmail.com",
+          contact:
+            token && selectedDeliveryAddress
+              ? user.phone_number
+              : shippingAddress.phone,
         },
         theme: {
           color: "#24A148",
         },
         modal: {
           ondismiss: () => {
-            reject(new Error("Payment cancelled"))
+            reject(new Error("Payment cancelled"));
           },
         },
-      }
+      };
 
       try {
-        const razorpay = new window.Razorpay(options)
-        razorpay.open()
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
       } catch (error) {
-        reject(error)
+        reject(error);
       }
-    })
-  }
+    });
+  };
+
+  const validateGuestAddresses = async () => {
+    if (!addressSectionRef.current) return false;
+    try {
+      const shippingValid =
+        await addressSectionRef.current.validateShippingForm();
+      const billingValid =
+        await addressSectionRef.current.validateBillingForm();
+      return shippingValid && billingValid;
+    } catch (error) {
+      console.error("Validation error:", error);
+      return false;
+    }
+  };
+
   const handlePlaceOrder = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
     setIsLoading(true);
+
+    // For guest users, validate email and address forms before placing order
+    if (!token) {
+      // Trigger email validation so error message appears below the email field if invalid
+      const isEmailValid = guestContactRef.current?.validate();
+      const areAddressesValid = await validateGuestAddresses();
+      if (!isEmailValid || !areAddressesValid) {
+        setIsLoading(false);
+        return;
+      }
+    }
+
     // Validate cart
     const cartItems =
       token && cartData ? cartData.products : localCart.cartItems;
     if (!cartItems || cartItems.length === 0) {
       toast.error("Your cart is empty!");
-      setIsLoading(false)
+      setIsLoading(false);
       return;
     }
 
-    // Validate addresses
-    if (token) {
-      if (!addresses || addresses.length === 0) {
-        toast.error("No addresses found. Please add an address.");
-        setIsLoading(false)
-        return;
-      }
-      if (!selectedDeliveryAddress || !selectedBillingAddress) {
-        toast.error("Please select both delivery and billing addresses.");
-        setIsLoading(false)
-        return;
-      }
-    } else {
-      // Validate guest shipping address
-      if (
-        !shippingAddress.fullName ||
-        !shippingAddress.address ||
-        !shippingAddress.city ||
-        !shippingAddress.state ||
-        !shippingAddress.zipcode ||
-        !shippingAddress.country ||
-        !shippingAddress.phone
-      ) {
-        toast.error("Please fill in your shipping address.");
-        setIsLoading(false)
-        return;
-      }
-
-      // Validate guest billing address if different
-      if (!billingSame) {
-        if (
-          !billingAddress.fullName ||
-          !billingAddress.address ||
-          !billingAddress.city ||
-          !billingAddress.state ||
-          !billingAddress.zipcode ||
-          !billingAddress.country
-        ) {
-          toast.error("Please fill in your billing address.");
-          setIsLoading(false)
-          return;
-        }
-      }
-    }
-
-    let paymentId = ""
-
-    // Handle online payment if selected
+    let paymentId = "";
     if (paymentMethod === "Online") {
       try {
-        paymentId = await handleRazorpayPayment()
-        setRazorpayPaymentId(paymentId)
+        paymentId = await handleRazorpayPayment();
+        setRazorpayPaymentId(paymentId);
       } catch (error) {
-        console.error("Payment failed:", error)
-        toast.error("Payment failed or was cancelled. Please try again.")
-        setIsLoading(false)
-        return
+        console.error("Payment failed:", error);
+        toast.error("Payment failed or was cancelled. Please try again.");
+        setIsLoading(false);
+        return;
       }
     }
 
-    // Build order payload
-    const orderPayload: OrderData = {
-      sub_total: subtotal,
-      tax: tax,
-      delivery_charge: deliveryCharges,
-      discount: 0,
-      final_total: finalTotal,
-      is_payment_done: paymentMethod === "online" ? true : false,
-      payment_transaction_id: paymentMethod === "Online" ? paymentId : "",
-      payment_type: paymentMethod,
-      payment_datetime: new Date().toISOString(),
-      billing_address:
-        token && selectedBillingAddress
-          ? `${selectedBillingAddress.address}, ${selectedBillingAddress.locality},${selectedBillingAddress.city}, ${selectedBillingAddress.state} ${selectedBillingAddress.zipcode}, ${selectedBillingAddress.country}`
-          : billingSame
-          ? `${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipcode}, ${shippingAddress.country}`
-          : `${billingAddress.address}, ${billingAddress.city}, ${billingAddress.state} ${billingAddress.zipcode}, ${billingAddress.country}`,
-      delivery_address:
-        token && selectedDeliveryAddress
+    if (token) {
+      const orderPayload: OrderData = {
+        sub_total: subtotal,
+        tax: tax,
+        delivery_charge: deliveryCharges,
+        discount: 0,
+        final_total: finalTotal,
+        is_payment_done: paymentMethod === "Online",
+        payment_transaction_id: paymentMethod === "Online" ? paymentId : "",
+        payment_type: paymentMethod,
+        payment_datetime: new Date().toISOString(),
+        billing_address: selectedBillingAddress
+          ? `${selectedBillingAddress.address}, ${selectedBillingAddress.locality}, ${selectedBillingAddress.city}, ${selectedBillingAddress.state} ${selectedBillingAddress.zipcode}, ${selectedBillingAddress.country}`
+          : "",
+        delivery_address: selectedDeliveryAddress
           ? `${selectedDeliveryAddress.address}, ${selectedDeliveryAddress.locality}, ${selectedDeliveryAddress.city}, ${selectedDeliveryAddress.state} ${selectedDeliveryAddress.zipcode}, ${selectedDeliveryAddress.country}`
-          : `${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipcode}, ${shippingAddress.country} - ${shippingAddress.phone}`,
-      products: (token && cartData
-        ? cartData.products
-        : localCart.cartItems
-      ).map((item) => ({
-        product_id: Number(item.id),
-        unit_price: parseFloat(item.price),
-        quantity: item.quantity,
-      })),
-    };
+          : "",
+        products: (token && cartData
+          ? cartData.products
+          : localCart.cartItems
+        ).map((item) => ({
+          product_id: Number(item.id),
+          unit_price: Number.parseFloat(item.price),
+          quantity: item.quantity,
+        })),
+      };
 
-    // Place order
-    try {
-      const orderResponse = await placeOrderAPI(orderPayload, token || "");
-      toast.success(orderResponse.message);
+      try {
+        const orderResponse = await placeOrderAPI(orderPayload, token);
+        toast.success(orderResponse.message);
 
-      if (orderResponse.message === "Order placed successfully") {
-        setOrderPlaced(true);
-        dispatch(clearCart());
-        router.push(`/thankyou?orderId=${orderResponse.order_id}`);
-      } else {
-        toast.success("Order placed successfully! (Demo)");
+        if (orderResponse.message === "Order placed successfully") {
+          setOrderPlaced(true);
+          dispatch(clearCart());
+          router.push(`/thankyou?orderId=${orderResponse.order_id}`);
+        } else {
+          toast.success("Order placed successfully! (Demo)");
+        }
+      } catch (error) {
+        console.error("Error placing order:", error);
+        toast.error("Error placing order. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Error placing order:", error);
-      toast.error("Error placing order. Please try again.");
-    } finally {
-      setIsLoading(false);
+    } else {
+      const guestOrderPayload = {
+        username: "guest",
+        first_name: shippingAddress.fullName.split(" ")[0] || "Guest",
+        last_name: shippingAddress.fullName.split(" ")[1] || "User",
+        email: guestEmail,
+        phone: shippingAddress.phone,
+        sub_total: subtotal,
+        tax: tax,
+        discount: 0,
+        delivery_charge: deliveryCharges,
+        final_total: finalTotal,
+        is_payment_done: paymentMethod === "Online",
+        payment_transaction_id: paymentMethod === "Online" ? paymentId : "",
+        payment_type: paymentMethod,
+        payment_datetime: new Date().toISOString(),
+        billing_address: billingSame
+          ? {
+              type: "Billing address",
+              address: shippingAddress.address,
+              locality: "",
+              city: shippingAddress.city,
+              state: shippingAddress.state,
+              country: shippingAddress.country,
+              zipcode: shippingAddress.zipcode,
+            }
+          : {
+              type: "Billing address",
+              address: billingAddress.address,
+              locality: "",
+              city: billingAddress.city,
+              state: billingAddress.state,
+              country: billingAddress.country,
+              zipcode: billingAddress.zipcode,
+            },
+        delivery_address: {
+          type: "Delivery address",
+          address: shippingAddress.address,
+          locality: "",
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          country: shippingAddress.country,
+          zipcode: shippingAddress.zipcode,
+        },
+        products: localCart.cartItems.map((item) => ({
+          product_id: Number(item.id),
+          unit_price: Number.parseFloat(item.price),
+          quantity: item.quantity,
+        })),
+      };
+
+      try {
+        const orderResponse = await placeGuestOrderAPI(guestOrderPayload);
+        toast.success(orderResponse.message);
+
+        if (orderResponse.message === "Order placed successfully") {
+          setOrderPlaced(true);
+          dispatch(clearCart());
+          router.push(`/thankyou?orderId=${orderResponse.order_id}`);
+        } else {
+          toast.success("Order placed successfully! (Demo)");
+        }
+      } catch (error) {
+        console.error("Error placing guest order:", error);
+        toast.error("Error placing order. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -331,13 +386,23 @@ export default function CheckoutPageClient() {
   return (
     <div className="container mx-auto py-8 px-4">
       {isLoading && <CheckoutLoadingOverlay />}
-
       <h1 className="text-3xl font-bold mb-6">You're almost there...!</h1>
 
       <div className="flex flex-col md:flex-row gap-8">
         {/* Left Section: Address Details */}
-        <div className="w-full md:w-2/3">
+        <div className="w-full md:w-7/12 space-y-6">
+          {/* For guest users, render the GuestContact component */}
+          {!token && (
+            <GuestContact
+              ref={guestContactRef}
+              guestEmail={guestEmail}
+              setGuestEmail={setGuestEmail}
+              error={guestEmailError}
+              setError={setGuestEmailError}
+            />
+          )}
           <AddressSection
+            ref={addressSectionRef}
             token={token}
             addresses={addresses}
             selectedDeliveryAddress={selectedDeliveryAddress}
@@ -364,7 +429,7 @@ export default function CheckoutPageClient() {
         </div>
 
         {/* Right Section: Cart & Payment Summary */}
-        <div className="w-full md:w-1/3 space-y-6">
+        <div className="w-full md:w-5/12 space-y-6">
           <CartSummarySection
             token={token}
             cartData={cartData}
