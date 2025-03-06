@@ -114,7 +114,6 @@ export default function CheckoutPageClient() {
       router.push("/shop");
     }
   }, [localCart.cartItems, orderPlaced, router]);
-  
 
   // Update cart when items change
   useEffect(() => {
@@ -304,8 +303,6 @@ export default function CheckoutPageClient() {
           setOrderPlaced(true);
           dispatch(clearCart());
           router.push(`/thankyou?orderId=${orderResponse.order_id}`);
-        } else {
-          toast.success("Order placed successfully! (Demo)");
         }
       } catch (error) {
         console.error("Error placing order:", error);
