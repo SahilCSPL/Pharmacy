@@ -23,7 +23,7 @@ const ThankYouPage = () => {
 
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  console.log("Order Id : ", orderId);
+  // console.log("Order Id : ", orderId);
   useEffect(() => {
     const fetchOrderDetails = async () => {
       if (!orderId) {
@@ -39,7 +39,7 @@ const ThankYouPage = () => {
         } else {
           // Call guest order API if not logged in
           data = await getGuestOrderDetails(1, 20, orderId);
-          console.log("Order Details : ", data);
+          // console.log("Order Details : ", data);
         }
         if (data.results && data.results.length > 0) {
           setOrderDetails(data.results[0]);

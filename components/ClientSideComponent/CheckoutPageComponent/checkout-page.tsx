@@ -110,13 +110,11 @@ export default function CheckoutPageClient() {
 
   // Redirect if cart is empty
   useEffect(() => {
-    if (token && !orderPlaced) {
-      if (!cartData) return;
-      if (localCart.cartItems.length === 0) {
-        router.push("/shop");
-      }
+    if (!orderPlaced && localCart.cartItems.length === 0) {
+      router.push("/shop");
     }
-  }, [token, cartData, localCart.cartItems, orderPlaced, router]);
+  }, [localCart.cartItems, orderPlaced, router]);
+  
 
   // Update cart when items change
   useEffect(() => {
