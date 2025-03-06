@@ -127,11 +127,11 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="items-center pb-3 px-3 bg-white rounded-[5px] border hover:shadow-md transition-transform duration-300 transform">
+    <div className="items-center pb-3 px-2 md:px-3 bg-white rounded-[5px] border hover:shadow-md transition-transform duration-300 transform">
       <div className="flex pt-3 justify-between">
-        <p className="bg-blue-100 text-[--mainColor] px-2 py-1 text-[10px]">
+        <span className="bg-blue-100 text-[--mainColor] px-2 py-1 text-[10px] m-1">
           {product.base_and_selling_price_difference_in_percent}% off
-        </p>
+        </span>
         <button
           onClick={handleWishlistToggle}
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
@@ -192,8 +192,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-[--textColor] text-[14px] truncate">
           {product.category_name}
         </p>
-        <div className="flex items-baseline justify-between text-sm">
-          <span className="text-red-500 font-bold pe-1">
+        <div className="flex flex-col md:flex-row items-baseline md:justify-between text-sm">
+          <span className="text-red-500 font-semibold pe-1">
             {formatPrice(product.base_price)}
           </span>
           <span className="text-gray-500 line-through">

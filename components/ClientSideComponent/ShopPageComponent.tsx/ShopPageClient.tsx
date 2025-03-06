@@ -152,7 +152,7 @@ export default function ShopPageClient({
   };
 
   return (
-    <div className="flex flex-col md:flex-row md:mx-5 md:mt-5 max-w-8xl p-4 md:p-0 lg:p-4">
+    <div className="flex flex-col md:flex-row md:mx-5 md:mt-5 max-w-8xl p-2 md:p-0 lg:p-4">
       {/* Sidebar for Desktop */}
       <div className="hidden md:block md:w-1/3 lg:w-1/4 xl:w-1/5 pr-3 xl:pr-4 ">
         <div className="flex items-center text-lg font-medium mb-3 p-4 bg-[--mainColor] text-white rounded-lg">
@@ -267,10 +267,10 @@ export default function ShopPageClient({
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 h-[700px] overflow-y-auto bg-white rounded-lg">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-2 md:p-4 h-[700px] overflow-y-auto bg-white rounded-lg">
           {displayedProducts.length > 0 ? (
             displayedProducts.map((product) => (
-              <div key={product.id} className="mb-3">
+              <div key={product.id} className="md:mb-3">
                 <ProductCard product={product} />
               </div>
             ))
