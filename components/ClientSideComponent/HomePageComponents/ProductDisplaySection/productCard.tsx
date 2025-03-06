@@ -192,7 +192,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-[--textColor] text-[14px] truncate">
           {product.category_name}
         </p>
-        <div className="flex flex-col md:flex-row items-baseline md:justify-between text-sm">
+        <div className="flex flex-col sm:flex-row items-baseline sm:justify-between text-sm">
           <span className="text-red-500 font-semibold pe-1">
             {formatPrice(product.base_price)}
           </span>
