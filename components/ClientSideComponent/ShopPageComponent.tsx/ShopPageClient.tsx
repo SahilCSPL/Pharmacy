@@ -220,8 +220,8 @@ export default function ShopPageClient({
           </div>
         </div>
         {/* Sort and Selected Filters Container */}
-        <div className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-end pb-4">
-          <div className="flex flex-wrap items-center gap-2 mb-4 md:mb-0">
+        <div className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-end pb-4 mt-3 md:mt-0">
+          <div className="flex flex-wrap items-center gap-2">
             {filters.subCategories.length > 0 && (
               <>
                 <button

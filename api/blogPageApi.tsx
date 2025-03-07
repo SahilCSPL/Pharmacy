@@ -15,6 +15,6 @@ export interface Blog {
 }
 
 export const getAllBlogs = async () => {
-  const data = await APICore<{ results: Blog[] }>("/frontend/blog", "GET");
+  const data = await APICore<{ results: Blog[] }>("/frontend/blog/?is_active=True", "GET");
   return data;
 };
