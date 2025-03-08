@@ -11,6 +11,8 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
     "framer-motion": "^12.0.11",
+    "leaflet": "^1.9.4",
+    "leaflet.smooth_marker_bouncing": "github:hosuaby/leaflet.smoothmarkerbouncing",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.477.0",
     "next": "15.1.6",
@@ -21,6 +23,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
     "react-icons": "^5.5.0",
+    "react-leaflet": "^5.0.0",
     "react-phone-input-2": "^2.15.1",
     "react-range": "^1.10.0",
     "react-redux": "^9.2.0",
@@ -29,6 +32,7 @@
     "swiper": "^11.2.2"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.16",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
